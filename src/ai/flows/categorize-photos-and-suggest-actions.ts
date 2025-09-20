@@ -20,8 +20,8 @@ const CategorizePhotosAndSuggestActionsInputSchema = z.object({
 export type CategorizePhotosAndSuggestActionsInput = z.infer<typeof CategorizePhotosAndSuggestActionsInputSchema>;
 
 const CategorizePhotosAndSuggestActionsOutputSchema = z.object({
-  category: z.string().describe('The category of the photo (e.g., "bill", "ticket", "event", "qr_code", "receipt", "business_card", "document", "other").'),
-  suggestedActions: z.array(z.string()).describe('A list of up to 5 suggested actions based on the photo (e.g., "Add to Calendar", "Save Ticket", "Pay Bill", "Scan QR Code").'),
+  category: z.string().describe('The category of the photo (e.g., "bills", "Tickets", "Ads", "Memes", "documents").'),
+  suggestedActions: z.array(z.string()).describe('A list of up to 5 suggested actions based on the photo (e.g., "Add to Calendar", "Save Ticket", "Pay Bill").'),
   qrCodeUrl: z.string().optional().describe('The URL extracted from the QR code, if present.'),
 });
 export type CategorizePhotosAndSuggestActionsOutput = z.infer<typeof CategorizePhotosAndSuggestActionsOutputSchema>;
@@ -34,15 +34,18 @@ const categorizePhotosAndSuggestActionsPrompt = ai.definePrompt({
   name: 'categorizePhotosAndSuggestActionsPrompt',
   input: {schema: CategorizePhotosAndSuggestActionsInputSchema},
   output: {schema: CategorizePhotosAndSuggestActionsOutputSchema},
-  prompt: `You are an expert AI assistant designed to accurately categorize photos and suggest relevant actions.
+  prompt: `You are an expert AI assistant designed to accurately categorize photos.
 
-Your primary goal is to analyze the photo and determine its most fitting category. Possible categories include: "bill", "ticket", "receipt", "event", "business_card", "document", "qr_code", or "other".
+Your primary goal is to analyze the photo and determine its most fitting category from the following list: "bills", "Tickets", "Ads", "Memes", "documents".
 
-Based on the determined category, suggest a list of up to 5 appropriate actions.
+- If the image is a bill or invoice, categorize it as "bills".
+- If the image is a ticket or event invitation, categorize it as "Tickets".
+- If the image appears to be an advertisement, categorize it as "Ads".
+- If the image is a meme or humorous internet image, categorize it as "Memes".
+- If the image is a general document, letter, or form, categorize it as "documents".
+- If a QR code is present, extract its URL for the qrCodeUrl field, but categorize the image based on its primary content (e.g., a ticket with a QR code is still a "Tickets").
 
-- If, and only if, a QR code is clearly visible and scannable in the photo, set the category to "qr_code", extract the URL from it, populate the qrCodeUrl field, and suggest "Scan QR Code" as an action. Do not categorize an image as a QR code if it contains other primary content like a bill or a ticket, even if a small QR code is present. In such cases, categorize based on the main subject.
-- If the image is a bill or invoice, suggest actions like "Pay Bill" or "Set Reminder".
-- If the image is a ticket or event invitation, suggest actions like "Save Ticket" and "Add to Calendar".
+Based on the determined category, you can also suggest a list of up to 5 appropriate actions.
 
 Analyze the photo carefully before making a decision.
 
