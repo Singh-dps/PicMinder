@@ -18,23 +18,34 @@ interface AppState {
   scannedItems: ScannedItem[];
   addScannedItem: (item: ScannedItem) => void;
   removeScannedItem: (id: string) => void;
+  ticketItems: ScannedItem[];
+  addTicketItem: (item: ScannedItem) => void;
+  removeTicketItem: (id: string) => void;
+  isTicketSaved: (photoDataUri: string) => boolean;
 }
 
 const AppStateContext = createContext<AppState | undefined>(undefined);
 
-const LOCAL_STORAGE_KEY = 'jarvisScannedItems';
+const LOCAL_STORAGE_KEY_SCANS = 'jarvisScannedItems';
+const LOCAL_STORAGE_KEY_TICKETS = 'jarvisTicketItems';
+
 
 export const AppStateProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [scannedItems, setScannedItems] = useState<ScannedItem[]>([]);
+  const [ticketItems, setTicketItems] = useState<ScannedItem[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     try {
-      const item = window.localStorage.getItem(LOCAL_STORAGE_KEY);
-      if (item) {
-        setScannedItems(JSON.parse(item));
+      const scans = window.localStorage.getItem(LOCAL_STORAGE_KEY_SCANS);
+      if (scans) {
+        setScannedItems(JSON.parse(scans));
+      }
+      const tickets = window.localStorage.getItem(LOCAL_STORAGE_KEY_TICKETS);
+      if (tickets) {
+        setTicketItems(JSON.parse(tickets));
       }
     } catch (error) {
       console.warn('Error reading localStorage:', error);
@@ -45,20 +56,18 @@ export const AppStateProvider: React.FC<{ children: ReactNode }> = ({
   useEffect(() => {
     if (isLoaded) {
       try {
-        window.localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(scannedItems));
+        window.localStorage.setItem(LOCAL_STORAGE_KEY_SCANS, JSON.stringify(scannedItems));
+        window.localStorage.setItem(LOCAL_STORAGE_KEY_TICKETS, JSON.stringify(ticketItems));
       } catch (error) {
         console.warn('Error writing to localStorage:', error);
       }
     }
-  }, [scannedItems, isLoaded]);
+  }, [scannedItems, ticketItems, isLoaded]);
 
   const addScannedItem = (item: ScannedItem) => {
     setScannedItems((prevItems) => {
       const isDuplicate = prevItems.some(
-        (prevItem) =>
-          prevItem.extractionResult?.extractedText &&
-          item.extractionResult?.extractedText &&
-          prevItem.extractionResult.extractedText === item.extractionResult.extractedText
+        (prevItem) => prevItem.photoDataUri === item.photoDataUri
       );
 
       if (isDuplicate) {
@@ -72,9 +81,28 @@ export const AppStateProvider: React.FC<{ children: ReactNode }> = ({
     setScannedItems((prevItems) => prevItems.filter((item) => item.id !== id));
   };
 
+  const addTicketItem = (item: ScannedItem) => {
+    setTicketItems((prevItems) => {
+      const isDuplicate = prevItems.some(
+        (prevItem) => prevItem.photoDataUri === item.photoDataUri
+      );
+      if (isDuplicate) {
+        return prevItems;
+      }
+      return [item, ...prevItems];
+    });
+  };
+
+  const removeTicketItem = (id: string) => {
+    setTicketItems((prevItems) => prevItems.filter((item) => item.id !== id));
+  };
+  
+  const isTicketSaved = (photoDataUri: string) => {
+    return ticketItems.some((item) => item.photoDataUri === photoDataUri);
+  }
 
   return (
-    <AppStateContext.Provider value={{ scannedItems, addScannedItem, removeScannedItem }}>
+    <AppStateContext.Provider value={{ scannedItems, addScannedItem, removeScannedItem, ticketItems, addTicketItem, removeTicketItem, isTicketSaved }}>
       {children}
     </AppStateContext.Provider>
   );

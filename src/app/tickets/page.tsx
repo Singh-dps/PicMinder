@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 type EventStatus = 'Upcoming' | 'Ongoing' | 'Past';
 
 export default function TicketsPage() {
-  const { scannedItems } = useAppState();
+  const { ticketItems } = useAppState();
   const [categorizedTickets, setCategorizedTickets] = useState<{
     [key in EventStatus]: ScannedItem[];
   }>({
@@ -20,10 +20,6 @@ export default function TicketsPage() {
   });
 
   useEffect(() => {
-    const ticketItems = scannedItems.filter(
-      (item) => item.categorizationResult?.category.toLowerCase() === 'ticket'
-    );
-
     const now = new Date();
 
     const getEventDate = (item: ScannedItem): [Date | null, Date | null] => {
@@ -88,12 +84,7 @@ export default function TicketsPage() {
       Ongoing: ongoing,
       Past: past,
     });
-  }, [scannedItems]);
-
-  const ticketItems = scannedItems.filter(
-    (item) => item.categorizationResult?.category.toLowerCase() === 'ticket'
-  );
-
+  }, [ticketItems]);
 
   return (
     <div className="flex flex-col h-screen bg-background text-foreground antialiased w-full max-w-4xl mx-auto">
@@ -117,13 +108,13 @@ export default function TicketsPage() {
                   <TabsTrigger value="Past">Past ({categorizedTickets.Past.length})</TabsTrigger>
                 </TabsList>
                 <TabsContent value="Upcoming" className="flex-1 mt-4">
-                  <HistoryView scannedItems={categorizedTickets.Upcoming} />
+                  <HistoryView scannedItems={categorizedTickets.Upcoming} useTicketRemover={true} />
                 </TabsContent>
                 <TabsContent value="Ongoing" className="flex-1 mt-4">
-                  <HistoryView scannedItems={categorizedTickets.Ongoing} />
+                  <HistoryView scannedItems={categorizedTickets.Ongoing} useTicketRemover={true} />
                 </TabsContent>
                 <TabsContent value="Past" className="flex-1 mt-4">
-                  <HistoryView scannedItems={categorizedTickets.Past} />
+                  <HistoryView scannedItems={categorizedTickets.Past} useTicketRemover={true} />
                 </TabsContent>
               </Tabs>
             ) : (

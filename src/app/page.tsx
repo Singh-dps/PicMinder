@@ -75,14 +75,18 @@ export default function Home() {
           }
         }
 
-        addScannedItem({
-          id: new Date().toISOString(),
-          photoDataUri: dataUri,
-          extractionResult: extraction,
-          categorizationResult: categorization,
-          eventDetailsResult: eventDetails,
-          eventSummary: summary,
-        });
+        // We only add non-ticket items to the general history
+        if (categorization.category !== 'ticket') {
+          addScannedItem({
+            id: new Date().toISOString(),
+            photoDataUri: dataUri,
+            extractionResult: extraction,
+            categorizationResult: categorization,
+            eventDetailsResult: eventDetails,
+            eventSummary: summary,
+          });
+        }
+
 
       } catch (err) {
         console.error(err);

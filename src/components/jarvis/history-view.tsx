@@ -2,7 +2,7 @@
 
 import { ScannedItem, useAppState } from '@/context/app-state-context';
 import Image from 'next/image';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Card, CardFooter } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -16,15 +16,16 @@ import { X } from 'lucide-react';
 
 interface HistoryViewProps {
   scannedItems: ScannedItem[];
+  useTicketRemover?: boolean;
 }
 
-export function HistoryView({ scannedItems }: HistoryViewProps) {
-  const { removeScannedItem } = useAppState();
+export function HistoryView({ scannedItems, useTicketRemover = false }: HistoryViewProps) {
+  const { removeScannedItem, removeTicketItem } = useAppState();
 
   if (scannedItems.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center flex-1 text-center text-muted-foreground">
-        <p className="text-lg">No scanned photos yet.</p>
+        <p className="text-lg">No items to display.</p>
         <p>Go back to the main page to upload a photo.</p>
       </div>
     );
@@ -32,7 +33,11 @@ export function HistoryView({ scannedItems }: HistoryViewProps) {
 
   const handleDelete = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
-    removeScannedItem(id);
+    if (useTicketRemover) {
+      removeTicketItem(id);
+    } else {
+      removeScannedItem(id);
+    }
   };
 
   const formatScanTime = (isoString: string) => {
