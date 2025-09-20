@@ -45,7 +45,7 @@ export function ResultsDisplay({
   hideExtractedText = false,
 }: ResultsDisplayProps) {
   const { toast } = useToast();
-  const { addTicketItem, isTicketSaved } = useAppState();
+  const { isTicketSaved } = useAppState();
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
   const [isSummarizing, setIsSummarizing] = useState(false);
   const [currentEventSummary, setCurrentEventSummary] = useState(eventSummary);
@@ -124,7 +124,8 @@ export function ResultsDisplay({
     action !== 'Share on WhatsApp' &&
     action !== 'View Event Details' &&
     action !== 'Open Link' &&
-    action !== 'Get Directions'
+    action !== 'Get Directions' &&
+    action !== 'Scan QR Code'
   ) || [];
 
   return (
