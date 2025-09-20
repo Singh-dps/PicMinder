@@ -20,8 +20,8 @@ const CategorizePhotosAndSuggestActionsInputSchema = z.object({
 export type CategorizePhotosAndSuggestActionsInput = z.infer<typeof CategorizePhotosAndSuggestActionsInputSchema>;
 
 const CategorizePhotosAndSuggestActionsOutputSchema = z.object({
-  category: z.string().describe('The category of the photo (e.g., "bill", "ticket", "event", "qr_code").'),
-  suggestedActions: z.array(z.string()).describe('A list of up to 7 suggested actions based on the photo (e.g., "Add to Calendar", "Create a contact").'),
+  category: z.string().describe('The category of the photo (e.g., "bill", "ticket", "event", "qr_code", "receipt", "business_card", "document", "other").'),
+  suggestedActions: z.array(z.string()).describe('A list of up to 5 suggested actions based on the photo (e.g., "Add to Calendar", "Save Ticket", "Pay Bill").'),
   qrCodeUrl: z.string().optional().describe('The URL extracted from the QR code, if present.'),
 });
 export type CategorizePhotosAndSuggestActionsOutput = z.infer<typeof CategorizePhotosAndSuggestActionsOutputSchema>;
@@ -34,13 +34,19 @@ const categorizePhotosAndSuggestActionsPrompt = ai.definePrompt({
   name: 'categorizePhotosAndSuggestActionsPrompt',
   input: {schema: CategorizePhotosAndSuggestActionsInputSchema},
   output: {schema: CategorizePhotosAndSuggestActionsOutputSchema},
-  prompt: `You are an AI assistant designed to categorize photos and suggest relevant actions.
+  prompt: `You are an expert AI assistant designed to accurately categorize photos and suggest relevant actions.
 
-  Analyze the photo and determine its category.
-  Suggest a list of up to 7 appropriate actions based on the photo's content.
-  - If the photo contains a QR code, set the category to "qr_code", extract the URL from it, and populate the qrCodeUrl field.
+Your primary goal is to analyze the photo and determine its most fitting category. Possible categories include: "bill", "ticket", "receipt", "event", "business_card", "document", "qr_code", or "other".
 
-  Photo: {{media url=photoDataUri}}
+Based on the determined category, suggest a list of up to 5 appropriate actions.
+
+- If, and only if, a QR code is clearly visible and scannable in the photo, set the category to "qr_code", extract the URL from it, and populate the qrCodeUrl field. Do not categorize an image as a QR code if it contains other primary content like a bill or a ticket, even if a small QR code is present. In such cases, categorize based on the main subject.
+- If the image is a bill or invoice, suggest actions like "Pay Bill" or "Set Reminder".
+- If the image is a ticket or event invitation, suggest actions like "Save Ticket" and "Add to Calendar".
+
+Analyze the photo carefully before making a decision.
+
+Photo: {{media url=photoDataUri}}
   `,
 });
 
