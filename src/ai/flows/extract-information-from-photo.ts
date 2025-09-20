@@ -25,12 +25,6 @@ const ExtractInformationFromPhotoOutputSchema = z.object({
   entities: z.array(z.string()).describe('The identified entities in the photo.'),
   visualFeatures: z.array(z.string()).describe('The identified visual features in the photo.'),
   address: z.string().optional().describe('The physical address found in the photo, if any.'),
-  event: z.object({
-      title: z.string().describe('The title or name of the event.'),
-      startTime: z.string().describe('The start date and time of the event in ISO 8601 format.'),
-      endTime: z.string().optional().describe('The end date and time of the event in ISO 8601 format.'),
-      location: z.string().optional().describe('The location of the event.'),
-    }).optional().describe('If the photo is an event invitation, ticket, or similar, extract the event details.'),
 });
 export type ExtractInformationFromPhotoOutput = z.infer<typeof ExtractInformationFromPhotoOutputSchema>;
 
@@ -45,11 +39,10 @@ const prompt = ai.definePrompt({
   prompt: `You are an expert AI assistant specializing in extracting information from photos.
 
 You will analyze the photo and extract the text, identify entities, recognize visual features, and extract any physical address found.
-If the photo appears to be an event invitation, ticket, or schedule, extract the details of the event, including title, start time, end time, and location.
 
 Photo: {{media url=photoDataUri}}
 
-Output the extracted text, entities, visual features, address, and event details in the specified JSON format.
+Output the extracted text, entities, visual features, and address in the specified JSON format.
 `,
 });
 
