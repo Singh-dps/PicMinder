@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
-  Lightbulb,
   Play,
   MapPin,
 } from 'lucide-react';
@@ -46,27 +45,6 @@ export function ResultsDisplay({
       </Card>
 
       <div className="space-y-4">
-        {categorizationResult && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Lightbulb className="text-primary" />
-                <span>Summary</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <h3 className="text-sm font-medium text-muted-foreground mb-2">
-                  Category
-                </h3>
-                <Badge variant="secondary" className="text-lg py-1 px-3">
-                  {categorizationResult.category}
-                </Badge>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
         {hasActions && (
           <Card>
             <CardHeader>
