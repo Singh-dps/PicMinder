@@ -48,7 +48,7 @@ Your primary goal is to analyze the photo and determine its most fitting categor
 Based on the determined category, suggest appropriate actions.
 - If the category is "bills", you MUST suggest the following 5 actions: "Save Bill", "Contact Store", "Go to store", "Open links", "Share Via whatsapp".
 - If the category is "Tickets", you MUST suggest the following actions: "Save Ticket", "Add to Calendar", "View Event Details", "Contact Organizer", "Get Directions", "Share on WhatsApp". If a QR code is present, also suggest "Scan QR Code".
-- If the category is "Memes", you MUST suggest the following actions: "Explain Meme", "Share".
+- If the category is "Memes", you MUST suggest the following action: "Explain Meme".
 - For all other categories, you can suggest a list of up to 5 appropriate actions (e.g., "Share").
 
 Analyze the photo carefully before making a decision.
