@@ -3,12 +3,14 @@ import type { CategorizePhotosAndSuggestActionsOutput } from '@/ai/flows/categor
 import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Lightbulb,
   Tag,
   BookText,
   Shapes,
   Sparkles,
+  Play,
 } from 'lucide-react';
 
 interface ResultsDisplayProps {
@@ -35,88 +37,105 @@ export function ResultsDisplay({
         </div>
       </Card>
 
-      {categorizationResult && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Lightbulb className="text-primary" />
-              <span>Summary</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <h3 className="text-sm font-medium text-muted-foreground mb-2">
-                Category
-              </h3>
-              <Badge variant="secondary" className="text-lg py-1 px-3">
-                {categorizationResult.category}
-              </Badge>
-            </div>
-            <div>
-              <h3 className="text-sm font-medium text-muted-foreground mb-2">
-                Suggested Action
-              </h3>
-              <p className="font-semibold text-accent-foreground bg-accent/20 border border-accent rounded-md p-3">
-                {categorizationResult.suggestedAction}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      <Tabs defaultValue="details" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="details">Details</TabsTrigger>
+          <TabsTrigger value="actions">Actions</TabsTrigger>
+        </TabsList>
+        <TabsContent value="details" className="mt-4 space-y-4">
+          {categorizationResult && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Lightbulb className="text-primary" />
+                  <span>Summary</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground mb-2">
+                    Category
+                  </h3>
+                  <Badge variant="secondary" className="text-lg py-1 px-3">
+                    {categorizationResult.category}
+                  </Badge>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
-      {extractionResult && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Sparkles className="text-primary" />
-              <span>Extracted Details</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {extractionResult.extractedText && (
-              <div>
-                <h3 className="font-semibold flex items-center gap-2 mb-2">
-                  <BookText size={18} />
-                  Extracted Text
-                </h3>
-                <p className="text-sm text-muted-foreground bg-muted p-3 rounded-md max-h-40 overflow-y-auto">
-                  {extractionResult.extractedText}
+          {extractionResult && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Sparkles className="text-primary" />
+                  <span>Extracted Details</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {extractionResult.extractedText && (
+                  <div>
+                    <h3 className="font-semibold flex items-center gap-2 mb-2">
+                      <BookText size={18} />
+                      Extracted Text
+                    </h3>
+                    <p className="text-sm text-muted-foreground bg-muted p-3 rounded-md max-h-40 overflow-y-auto">
+                      {extractionResult.extractedText}
+                    </p>
+                  </div>
+                )}
+                {extractionResult.entities &&
+                  extractionResult.entities.length > 0 && (
+                    <div>
+                      <h3 className="font-semibold flex items-center gap-2 mb-2">
+                        <Tag size={18} />
+                        Entities
+                      </h3>
+                      <div className="flex flex-wrap gap-2">
+                        {extractionResult.entities.map((entity) => (
+                          <Badge key={entity}>{entity}</Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                {extractionResult.visualFeatures &&
+                  extractionResult.visualFeatures.length > 0 && (
+                    <div>
+                      <h3 className="font-semibold flex items-center gap-2 mb-2">
+                        <Shapes size={18} />
+                        Visual Features
+                      </h3>
+                      <div className="flex flex-wrap gap-2">
+                        {extractionResult.visualFeatures.map((feature) => (
+                          <Badge variant="outline" key={feature}>
+                            {feature}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+        <TabsContent value="actions" className="mt-4">
+          {categorizationResult && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Play className="text-primary" />
+                  <span>Suggested Action</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="font-semibold text-accent-foreground bg-accent/20 border border-accent rounded-md p-3">
+                  {categorizationResult.suggestedAction}
                 </p>
-              </div>
-            )}
-            {extractionResult.entities &&
-              extractionResult.entities.length > 0 && (
-                <div>
-                  <h3 className="font-semibold flex items-center gap-2 mb-2">
-                    <Tag size={18} />
-                    Entities
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {extractionResult.entities.map((entity) => (
-                      <Badge key={entity}>{entity}</Badge>
-                    ))}
-                  </div>
-                </div>
-              )}
-            {extractionResult.visualFeatures &&
-              extractionResult.visualFeatures.length > 0 && (
-                <div>
-                  <h3 className="font-semibold flex items-center gap-2 mb-2">
-                    <Shapes size={18} />
-                    Visual Features
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {extractionResult.visualFeatures.map((feature) => (
-                      <Badge variant="outline" key={feature}>
-                        {feature}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              )}
-          </CardContent>
-        </Card>
-      )}
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
