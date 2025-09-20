@@ -64,7 +64,7 @@ export function ResultsDisplay({
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Play className="text-primary" />
-                <span>Suggested Actions</span>
+                <span>Actions</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col space-y-2">
