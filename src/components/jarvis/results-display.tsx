@@ -85,7 +85,7 @@ export function ResultsDisplay({
       address = extractionResult?.address;
     }
     if (address) {
-      const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+      const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`;
       window.open(mapsUrl, '_blank');
     } else {
       toast({
@@ -188,7 +188,7 @@ export function ResultsDisplay({
     if (actionLower.includes('ticket')) return <Bookmark className="mr-2" />;
     if (actionLower.includes('share')) return <Share2 className="mr-2" />;
     if (actionLower.includes('details')) return <Eye className="mr-2" />;
-    if (actionLower.includes('qr code') || actionLower.includes('link')) return <LinkIcon className="mr-2" />;
+    if (actionLower.includes('scan qr code') || actionLower.includes('open link')) return <LinkIcon className="mr-2" />;
     if (actionLower.includes('direction') || actionLower.includes('go to store')) return <MapPin className="mr-2" />;
     if (actionLower.includes('bill')) return <Receipt className="mr-2" />;
     if (actionLower.includes('contact')) return <Phone className="mr-2" />;
@@ -207,7 +207,7 @@ export function ResultsDisplay({
       handleWhatsAppClick();
     } else if (actionLower.includes('details')) {
       handleViewDetailsClick();
-    } else if (actionLower.includes('qr code') || actionLower.includes('open link')) {
+    } else if (actionLower.includes('scan qr code') || actionLower.includes('open links')) {
       handleQrCodeClick();
     } else if (actionLower.includes('direction') || actionLower.includes('go to store')) {
       handleDirectionsClick();
