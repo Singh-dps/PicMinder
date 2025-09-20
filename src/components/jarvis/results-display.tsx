@@ -23,7 +23,6 @@ import {
   Share2,
   Eye,
   Link as LinkIcon,
-  Save,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAppState } from '@/context/app-state-context';
@@ -113,29 +112,11 @@ export function ResultsDisplay({
     }
   };
 
-  const handleSaveTicket = () => {
-    addTicketItem({
-        id: new Date().toISOString(),
-        photoDataUri,
-        extractionResult,
-        categorizationResult,
-        eventDetailsResult,
-        eventSummary,
-      });
-    toast({
-        title: "Ticket Saved",
-        description: "The ticket has been saved to your collection.",
-    });
-  }
-
-  const isCurrentTicketSaved = categorizationResult?.category === 'ticket' && isTicketSaved(photoDataUri);
-
   const hasActions = (categorizationResult && categorizationResult.suggestedActions?.length > 0);
   const showCalendarAction = categorizationResult?.suggestedActions.includes('Add to Calendar') && eventDetailsResult;
   const showWhatsAppAction = categorizationResult?.suggestedActions.includes('Share on WhatsApp') && eventDetailsResult;
   const showViewDetailsAction = categorizationResult?.suggestedActions.includes('View Event Details') && eventDetailsResult;
   const showOpenLinkAction = categorizationResult?.suggestedActions.includes('Open Link') && categorizationResult?.qrCodeUrl;
-  const showSaveTicketAction = categorizationResult?.category === 'ticket';
 
 
   const otherActions = categorizationResult?.suggestedActions.filter(action =>
@@ -177,12 +158,6 @@ export function ResultsDisplay({
               </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col space-y-2">
-              {showSaveTicketAction && (
-                <Button onClick={handleSaveTicket} disabled={isCurrentTicketSaved} variant="outline" className="justify-start">
-                  <Save className="mr-2" />
-                  {isCurrentTicketSaved ? 'Ticket Saved' : 'Save Ticket'}
-                </Button>
-              )}
               {showCalendarAction && (
                 <Button onClick={handleCalendarClick} variant="outline" className="justify-start">
                   <CalendarPlus className="mr-2" />

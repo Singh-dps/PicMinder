@@ -13,5 +13,4 @@ export {
     Share2,
     Eye,
     Link as LinkIcon,
-    Save,
 } from 'lucide-react';
