@@ -16,10 +16,10 @@ import { ResultsDisplay } from '@/components/jarvis/results-display';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useAppState } from '@/context/app-state-context';
+import { useAppState, ScannedItem } from '@/context/app-state-context';
 
 export default function Home() {
-  const { addScannedItem, addTicketItem } = useAppState();
+  const { addScannedItem } = useAppState();
 
   const [photoDataUri, setPhotoDataUri] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -31,6 +31,7 @@ export default function Home() {
     useState<ExtractEventDetailsOutput | null>(null);
   const [eventSummary, setEventSummary] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [currentItem, setCurrentItem] = useState<ScannedItem | null>(null);
 
   const { toast } = useToast();
 
@@ -59,10 +60,8 @@ export default function Home() {
         let summary: string | null = null;
 
         if (categorization.suggestedActions.includes('View Event Details')) {
-          // Now we run this in parallel with the above
           const eventDetailsPromise = extractEventDetails({ photoDataUri: dataUri });
           
-          // Show initial results first
           setIsProcessing(false);
 
           eventDetails = await eventDetailsPromise;
@@ -73,9 +72,11 @@ export default function Home() {
             summary = summaryResult.summary;
             setEventSummary(summary);
           }
+        } else {
+          setIsProcessing(false);
         }
 
-        const newItem = {
+        const newItem: ScannedItem = {
           id: new Date().toISOString(),
           photoDataUri: dataUri,
           extractionResult: extraction,
@@ -84,11 +85,8 @@ export default function Home() {
           eventSummary: summary,
         };
 
+        setCurrentItem(newItem);
         addScannedItem(newItem);
-        if (categorization.category === 'ticket') {
-          addTicketItem(newItem);
-        }
-
 
       } catch (err) {
         console.error(err);
@@ -99,11 +97,7 @@ export default function Home() {
           description:
             'An unexpected error occurred while analyzing your photo.',
         });
-      } finally {
-        // This might be set to false earlier now
-        if (isProcessing) {
-          setIsProcessing(false);
-        }
+        setIsProcessing(false);
       }
     };
     reader.readAsDataURL(file);
@@ -118,6 +112,7 @@ export default function Home() {
     setEventSummary(null);
     setIsProcessing(false);
     setError(null);
+    setCurrentItem(null);
   };
 
   const currentView = () => {
@@ -151,6 +146,7 @@ export default function Home() {
             )}
             {currentView() === 'results' &&
               photoDataUri &&
+              currentItem &&
               (extractionResult || categorizationResult) && (
                 <>
                   <Button
@@ -163,6 +159,7 @@ export default function Home() {
                     Upload another photo
                   </Button>
                   <ResultsDisplay
+                    scannedItem={currentItem}
                     photoDataUri={photoDataUri}
                     extractionResult={extractionResult}
                     categorizationResult={categorizationResult}

@@ -78,6 +78,7 @@ export function HistoryView({ scannedItems }: HistoryViewProps) {
             </DialogHeader>
             <div className="max-h-[80vh] overflow-y-auto mt-4 pr-2">
               <ResultsDisplay
+                scannedItem={item}
                 photoDataUri={item.photoDataUri}
                 extractionResult={item.extractionResult}
                 categorizationResult={item.categorizationResult}

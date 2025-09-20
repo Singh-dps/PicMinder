@@ -23,10 +23,13 @@ import {
   Share2,
   Eye,
   Link as LinkIcon,
+  Bookmark,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { ScannedItem, useAppState } from '@/context/app-state-context';
 
 interface ResultsDisplayProps {
+  scannedItem: ScannedItem;
   photoDataUri: string;
   extractionResult: ExtractInformationFromPhotoOutput | null;
   categorizationResult: CategorizePhotosAndSuggestActionsOutput | null;
@@ -36,6 +39,7 @@ interface ResultsDisplayProps {
 }
 
 export function ResultsDisplay({
+  scannedItem,
   photoDataUri,
   extractionResult,
   categorizationResult,
@@ -44,9 +48,12 @@ export function ResultsDisplay({
   hideExtractedText = false,
 }: ResultsDisplayProps) {
   const { toast } = useToast();
+  const { addTicketItem, ticketItems } = useAppState();
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
   const [isSummarizing, setIsSummarizing] = useState(false);
   const [currentEventSummary, setCurrentEventSummary] = useState(eventSummary);
+
+  const isTicketSaved = ticketItems.some(item => item.id === scannedItem.id);
 
   const handleQrCodeClick = () => {
     if (categorizationResult?.qrCodeUrl) {
@@ -109,23 +116,33 @@ export function ResultsDisplay({
       setIsSummarizing(false);
     }
   };
+  
+  const handleSaveTicket = () => {
+    if (scannedItem) {
+      addTicketItem(scannedItem);
+      toast({
+        title: 'Ticket Saved',
+        description: 'The ticket has been saved to your tickets page.',
+      });
+    }
+  };
 
   const hasActions = (categorizationResult && categorizationResult.suggestedActions?.length > 0);
   const showCalendarAction = categorizationResult?.suggestedActions.includes('Add to Calendar') && eventDetailsResult;
   const showWhatsAppAction = categorizationResult?.suggestedActions.includes('Share on WhatsApp') && eventDetailsResult;
   const showViewDetailsAction = categorizationResult?.suggestedActions.includes('View Event Details') && eventDetailsResult;
   const showOpenLinkAction = categorizationResult?.suggestedActions.includes('Open Link') && categorizationResult?.qrCodeUrl;
-
+  const showSaveTicketAction = categorizationResult?.suggestedActions.includes('Save Ticket');
 
   const otherActions = categorizationResult?.suggestedActions.filter(action =>
     action !== 'Add to Calendar' &&
     action !== 'Share on WhatsApp' &&
     action !== 'View Event Details' &&
     action !== 'Open Link' &&
+    action !== 'Save Ticket' &&
     action !== 'Get Directions' &&
     action !== 'Scan QR Code' &&
-    action !== 'Contact Organizer' &&
-    action !== 'Save Ticket'
+    action !== 'Contact Organizer'
   ) || [];
 
   return (
@@ -163,6 +180,12 @@ export function ResultsDisplay({
                 <Button onClick={handleCalendarClick} variant="outline" className="justify-start">
                   <CalendarPlus className="mr-2" />
                   Add to Calendar
+                </Button>
+              )}
+               {showSaveTicketAction && (
+                <Button onClick={handleSaveTicket} variant="outline" className="justify-start" disabled={isTicketSaved}>
+                  <Bookmark className="mr-2" />
+                  {isTicketSaved ? 'Ticket Saved' : 'Save Ticket'}
                 </Button>
               )}
               {showWhatsAppAction && (

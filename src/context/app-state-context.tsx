@@ -74,10 +74,6 @@ export const AppStateProvider: React.FC<{ children: ReactNode }> = ({
       }
       return [item, ...prevItems];
     });
-
-    if (item.categorizationResult?.category === 'ticket') {
-      addTicketItem(item);
-    }
   };
 
   const addTicketItem = (item: ScannedItem) => {
