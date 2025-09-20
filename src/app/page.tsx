@@ -3,8 +3,10 @@
 import { useState } from 'react';
 import type { ExtractInformationFromPhotoOutput } from '@/ai/flows/extract-information-from-photo';
 import type { CategorizePhotosAndSuggestActionsOutput } from '@/ai/flows/categorize-photos-and-suggest-actions';
+import type { ExtractEventDetailsOutput } from '@/ai/flows/extract-event-details';
 import { extractInformationFromPhoto } from '@/ai/flows/extract-information-from-photo';
 import { categorizePhotosAndSuggestActions } from '@/ai/flows/categorize-photos-and-suggest-actions';
+import { extractEventDetails } from '@/ai/flows/extract-event-details';
 import { useToast } from '@/hooks/use-toast';
 import { JarvisHeader } from '@/components/jarvis/jarvis-header';
 import { PhotoUploader } from '@/components/jarvis/photo-uploader';
@@ -21,6 +23,8 @@ export default function Home() {
     useState<ExtractInformationFromPhotoOutput | null>(null);
   const [categorizationResult, setCategorizationResult] =
     useState<CategorizePhotosAndSuggestActionsOutput | null>(null);
+  const [eventDetailsResult, setEventDetailsResult] =
+    useState<ExtractEventDetailsOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const { toast } = useToast();
@@ -33,6 +37,7 @@ export default function Home() {
       setError(null);
       setExtractionResult(null);
       setCategorizationResult(null);
+      setEventDetailsResult(null);
       setIsProcessing(true);
 
       try {
@@ -42,6 +47,12 @@ export default function Home() {
         ]);
         setExtractionResult(extraction);
         setCategorizationResult(categorization);
+
+        if (categorization.suggestedActions.includes('Add to Calendar')) {
+          const eventDetails = await extractEventDetails({ photoDataUri: dataUri });
+          setEventDetailsResult(eventDetails);
+        }
+
       } catch (err) {
         console.error(err);
         setError('Failed to process the photo. Please try again.');
@@ -62,6 +73,7 @@ export default function Home() {
     setPhotoDataUri(null);
     setExtractionResult(null);
     setCategorizationResult(null);
+    setEventDetailsResult(null);
     setIsProcessing(false);
     setError(null);
   };
@@ -112,6 +124,7 @@ export default function Home() {
                     photoDataUri={photoDataUri}
                     extractionResult={extractionResult}
                     categorizationResult={categorizationResult}
+                    eventDetailsResult={eventDetailsResult}
                   />
                 </>
               )}

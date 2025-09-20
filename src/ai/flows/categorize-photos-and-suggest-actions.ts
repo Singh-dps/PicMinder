@@ -36,7 +36,7 @@ const categorizePhotosAndSuggestActionsPrompt = ai.definePrompt({
   prompt: `You are an AI assistant designed to categorize photos and suggest relevant actions.
 
   Analyze the photo and determine its category (e.g., bill, ticket, event, receipt, business card).
-  Suggest a list of up to 7 appropriate actions based on the photo's content (e.g., "Add a reminder", "Save to calendar", "Create a contact").
+  Suggest a list of up to 7 appropriate actions based on the photo's content (e.g., "Add a reminder", "Save to calendar", "Create a contact"). If the category is "event" or "ticket", you must include "Add to Calendar" as a suggested action.
 
   Photo: {{media url=photoDataUri}}
   `,
