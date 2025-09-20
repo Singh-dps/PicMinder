@@ -68,17 +68,6 @@ export function ResultsDisplay({
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              {extractionResult.extractedText && (
-                <div>
-                  <h3 className="font-semibold flex items-center gap-2 mb-2">
-                    <BookText size={18} />
-                    Extracted Text
-                  </h3>
-                  <p className="text-sm text-muted-foreground bg-muted p-3 rounded-md max-h-40 overflow-y-auto">
-                    {extractionResult.extractedText}
-                  </p>
-                </div>
-              )}
               {extractionResult.entities &&
                 extractionResult.entities.length > 0 && (
                   <div>
