@@ -1,10 +1,9 @@
 'use client';
 
-import { ScannedItem } from '@/context/app-state-context';
+import { ScannedItem, useAppState } from '@/context/app-state-context';
 import Image from 'next/image';
 import {
   Card,
-  CardContent,
 } from '@/components/ui/card';
 import {
   Dialog,
@@ -14,12 +13,16 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { ResultsDisplay } from './results-display';
+import { Button } from '@/components/ui/button';
+import { X } from 'lucide-react';
 
 interface HistoryViewProps {
   scannedItems: ScannedItem[];
 }
 
 export function HistoryView({ scannedItems }: HistoryViewProps) {
+    const { removeScannedItem } = useAppState();
+
   if (scannedItems.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center flex-1 text-center text-muted-foreground">
@@ -29,12 +32,26 @@ export function HistoryView({ scannedItems }: HistoryViewProps) {
     );
   }
 
+  const handleDelete = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    removeScannedItem(id);
+  }
+
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {scannedItems.map((item) => (
         <Dialog key={item.id}>
           <DialogTrigger asChild>
-            <Card className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow">
+            <Card className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow relative group">
+              <Button
+                variant="destructive"
+                size="icon"
+                className="absolute top-2 right-2 z-10 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={(e) => handleDelete(e, item.id)}
+              >
+                <X className="h-4 w-4" />
+                <span className="sr-only">Delete</span>
+              </Button>
               <div className="relative w-full aspect-square">
                 <Image
                   src={item.photoDataUri}

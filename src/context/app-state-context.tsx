@@ -16,6 +16,7 @@ export interface ScannedItem {
 interface AppState {
   scannedItems: ScannedItem[];
   addScannedItem: (item: ScannedItem) => void;
+  removeScannedItem: (id: string) => void;
 }
 
 const AppStateContext = createContext<AppState | undefined>(undefined);
@@ -66,8 +67,13 @@ export const AppStateProvider: React.FC<{ children: ReactNode }> = ({
     });
   };
 
+  const removeScannedItem = (id: string) => {
+    setScannedItems((prevItems) => prevItems.filter((item) => item.id !== id));
+  };
+
+
   return (
-    <AppStateContext.Provider value={{ scannedItems, addScannedItem }}>
+    <AppStateContext.Provider value={{ scannedItems, addScannedItem, removeScannedItem }}>
       {children}
     </AppStateContext.Provider>
   );
