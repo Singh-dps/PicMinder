@@ -373,5 +373,3 @@ export function ResultsDisplay({
     </div>
   );
 }
-
-    
