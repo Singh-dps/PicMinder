@@ -23,6 +23,7 @@ import {
   CalendarPlus,
   Share2,
   Eye,
+  Link as LinkIcon,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -52,6 +53,12 @@ export function ResultsDisplay({
     if (extractionResult?.address) {
       const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(extractionResult.address)}`;
       window.open(googleMapsUrl, '_blank');
+    }
+  };
+
+  const handleQrCodeClick = () => {
+    if (categorizationResult?.qrCodeUrl) {
+      window.open(categorizationResult.qrCodeUrl, '_blank');
     }
   };
 
@@ -115,12 +122,15 @@ export function ResultsDisplay({
   const showCalendarAction = categorizationResult?.suggestedActions.includes('Add to Calendar') && eventDetailsResult;
   const showWhatsAppAction = categorizationResult?.suggestedActions.includes('Share on WhatsApp') && eventDetailsResult;
   const showViewDetailsAction = categorizationResult?.suggestedActions.includes('View Event Details') && eventDetailsResult;
+  const showOpenLinkAction = categorizationResult?.suggestedActions.includes('Open Link') && categorizationResult?.qrCodeUrl;
+
 
   const otherActions = categorizationResult?.suggestedActions.filter(action =>
     action !== 'Add to Calendar' &&
     action !== 'Share on WhatsApp' &&
     action !== 'Take me to Location' &&
-    action !== 'View Event Details'
+    action !== 'View Event Details' &&
+    action !== 'Open Link'
   ) || [];
 
   return (
@@ -139,7 +149,7 @@ export function ResultsDisplay({
       {categorizationResult?.category && (
         <div className="flex justify-center">
           <Badge variant="secondary" className="text-base py-1 px-4 capitalize">
-            {categorizationResult.category}
+            {categorizationResult.category.replace('_', ' ')}
           </Badge>
         </div>
       )}
@@ -176,6 +186,12 @@ export function ResultsDisplay({
                 <Button onClick={handleViewDetailsClick} variant="outline" className="justify-start">
                   <Eye className="mr-2" />
                   View Event Details
+                </Button>
+              )}
+              {showOpenLinkAction && (
+                <Button onClick={handleQrCodeClick} variant="outline" className="justify-start">
+                    <LinkIcon className="mr-2" />
+                    Open Link
                 </Button>
               )}
               {otherActions.map((action, index) => (
