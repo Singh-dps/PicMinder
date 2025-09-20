@@ -5,7 +5,6 @@ import type { ExtractInformationFromPhotoOutput } from '@/ai/flows/extract-infor
 import type { CategorizePhotosAndSuggestActionsOutput } from '@/ai/flows/categorize-photos-and-suggest-actions';
 import { extractInformationFromPhoto } from '@/ai/flows/extract-information-from-photo';
 import { categorizePhotosAndSuggestActions } from '@/ai/flows/categorize-photos-and-suggest-actions';
-import { provideFeedback } from '@/ai/flows/provide-feedback-to-improve-accuracy';
 import { useToast } from '@/hooks/use-toast';
 import { JarvisHeader } from '@/components/jarvis/jarvis-header';
 import { PhotoUploader } from '@/components/jarvis/photo-uploader';
@@ -23,7 +22,6 @@ export default function Home() {
   const [categorizationResult, setCategorizationResult] =
     useState<CategorizePhotosAndSuggestActionsOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [photoId, setPhotoId] = useState<string | null>(null);
 
   const { toast } = useToast();
 
@@ -36,9 +34,6 @@ export default function Home() {
       setExtractionResult(null);
       setCategorizationResult(null);
       setIsProcessing(true);
-
-      const newPhotoId = `photo-${Date.now()}`;
-      setPhotoId(newPhotoId);
 
       try {
         const [extraction, categorization] = await Promise.all([
@@ -63,40 +58,12 @@ export default function Home() {
     reader.readAsDataURL(file);
   };
 
-  const handleFeedback = async (
-    categoryFeedback: 'correct' | 'incorrect' | 'unsure',
-    suggestedActionsFeedback: 'useful' | 'not_useful' | 'irrelevant',
-    comments?: string
-  ) => {
-    if (!photoId) return;
-    try {
-      const result = await provideFeedback({
-        photoId,
-        categoryFeedback,
-        suggestedActionsFeedback,
-        comments,
-      });
-      toast({
-        title: 'Feedback Submitted',
-        description: result.message,
-      });
-    } catch (err) {
-      console.error(err);
-      toast({
-        variant: 'destructive',
-        title: 'Feedback Error',
-        description: 'Failed to submit your feedback.',
-      });
-    }
-  };
-
   const handleReset = () => {
     setPhotoDataUri(null);
     setExtractionResult(null);
     setCategorizationResult(null);
     setIsProcessing(false);
     setError(null);
-    setPhotoId(null);
   };
 
   const currentView = () => {
@@ -145,7 +112,6 @@ export default function Home() {
                     photoDataUri={photoDataUri}
                     extractionResult={extractionResult}
                     categorizationResult={categorizationResult}
-                    onFeedback={handleFeedback}
                   />
                 </>
               )}
