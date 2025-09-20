@@ -6,11 +6,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
+  Copy,
   Play,
   MapPin,
   CalendarPlus,
   Share2,
 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 interface ResultsDisplayProps {
   photoDataUri: string;
@@ -25,6 +27,7 @@ export function ResultsDisplay({
   categorizationResult,
   eventDetailsResult,
 }: ResultsDisplayProps) {
+  const { toast } = useToast();
 
   const handleLocationClick = () => {
     if (extractionResult?.address) {
@@ -59,6 +62,16 @@ export function ResultsDisplay({
       }
       const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
       window.open(whatsappUrl, '_blank');
+    }
+  };
+  
+  const handleCopyText = () => {
+    if (extractionResult?.extractedText) {
+      navigator.clipboard.writeText(extractionResult.extractedText);
+      toast({
+        title: "Copied to clipboard",
+        description: "The extracted text has been copied.",
+      });
     }
   };
 
@@ -126,6 +139,27 @@ export function ResultsDisplay({
                   {action}
                 </Button>
               ))}
+            </CardContent>
+          </Card>
+        )}
+        
+        {extractionResult?.extractedText && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                <span className="flex items-center gap-2">
+                  <Copy className="text-primary" />
+                  <span>Extracted Text</span>
+                </span>
+                <Button variant="ghost" size="icon" onClick={handleCopyText}>
+                  <Copy className="h-4 w-4" />
+                </Button>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                {extractionResult.extractedText}
+              </p>
             </CardContent>
           </Card>
         )}
