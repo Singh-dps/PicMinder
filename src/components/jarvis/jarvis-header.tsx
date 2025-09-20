@@ -1,4 +1,5 @@
-import { BrainCircuit, History, Ticket } from 'lucide-react';
+
+import { BrainCircuit, History, Ticket, Receipt } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
@@ -10,6 +11,12 @@ export function JarvisHeader() {
         <h1 className="text-3xl font-bold tracking-tight">Jarvis</h1>
       </Link>
       <div className="flex items-center gap-2">
+        <Link href="/bills" passHref>
+            <Button variant="ghost" size="icon">
+                <Receipt className="h-5 w-5" />
+                <span className="sr-only">Bills</span>
+            </Button>
+        </Link>
         <Link href="/tickets" passHref>
             <Button variant="ghost" size="icon">
                 <Ticket className="h-5 w-5" />

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -25,6 +26,10 @@ import {
   Link as LinkIcon,
   Bookmark,
   MapPin,
+  Receipt,
+  Phone,
+  Store,
+  MessageSquare,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { ScannedItem, useAppState } from '@/context/app-state-context';
@@ -49,12 +54,13 @@ export function ResultsDisplay({
   hideExtractedText = false,
 }: ResultsDisplayProps) {
   const { toast } = useToast();
-  const { addTicketItem, ticketItems } = useAppState();
+  const { addTicketItem, ticketItems, addBillItem, billItems } = useAppState();
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
   const [isSummarizing, setIsSummarizing] = useState(false);
   const [currentEventSummary, setCurrentEventSummary] = useState(eventSummary);
 
   const isTicketSaved = ticketItems.some(item => item.id === scannedItem.id);
+  const isBillSaved = billItems.some(item => item.id === scannedItem.id);
 
   const handleQrCodeClick = () => {
     if (categorizationResult?.qrCodeUrl) {
@@ -105,6 +111,10 @@ export function ResultsDisplay({
       }
       const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
       window.open(whatsappUrl, '_blank');
+    } else {
+        const textToShare = extractionResult?.extractedText || "Check this out!";
+        const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(textToShare)}`;
+        window.open(whatsappUrl, '_blank');
     }
   };
 
@@ -145,13 +155,26 @@ export function ResultsDisplay({
     }
   };
 
+  const handleSaveBill = () => {
+    if (scannedItem) {
+      addBillItem(scannedItem);
+      toast({
+        title: 'Bill Saved',
+        description: 'The bill has been saved to your bills page.',
+      });
+    }
+  };
+
   const getActionIcon = (action: string) => {
-    if (action.toLowerCase().includes('calendar')) return <CalendarPlus className="mr-2" />;
-    if (action.toLowerCase().includes('ticket')) return <Bookmark className="mr-2" />;
-    if (action.toLowerCase().includes('share')) return <Share2 className="mr-2" />;
-    if (action.toLowerCase().includes('details')) return <Eye className="mr-2" />;
-    if (action.toLowerCase().includes('qr code')) return <LinkIcon className="mr-2" />;
-    if (action.toLowerCase().includes('direction')) return <MapPin className="mr-2" />;
+    const actionLower = action.toLowerCase();
+    if (actionLower.includes('calendar')) return <CalendarPlus className="mr-2" />;
+    if (actionLower.includes('ticket')) return <Bookmark className="mr-2" />;
+    if (actionLower.includes('share')) return <Share2 className="mr-2" />;
+    if (actionLower.includes('details')) return <Eye className="mr-2" />;
+    if (actionLower.includes('qr code') || actionLower.includes('link')) return <LinkIcon className="mr-2" />;
+    if (actionLower.includes('direction') || actionLower.includes('go to store')) return <MapPin className="mr-2" />;
+    if (actionLower.includes('bill')) return <Receipt className="mr-2" />;
+    if (actionLower.includes('contact')) return <Phone className="mr-2" />;
     return null;
   };
   
@@ -161,13 +184,15 @@ export function ResultsDisplay({
       handleCalendarClick();
     } else if (actionLower.includes('ticket')) {
       handleSaveTicket();
+    } else if (actionLower.includes('bill')) {
+      handleSaveBill();
     } else if (actionLower.includes('share')) {
       handleWhatsAppClick();
     } else if (actionLower.includes('details')) {
       handleViewDetailsClick();
-    } else if (actionLower.includes('qr code')) {
+    } else if (actionLower.includes('qr code') || actionLower.includes('open link')) {
       handleQrCodeClick();
-    } else if (actionLower.includes('direction')) {
+    } else if (actionLower.includes('direction') || actionLower.includes('go to store')) {
       handleDirectionsClick();
     } else {
       toast({
@@ -211,11 +236,22 @@ export function ResultsDisplay({
             </CardHeader>
             <CardContent className="flex flex-col space-y-2">
               {categorizationResult.suggestedActions.map((action, index) => {
-                  const isDisabled = action.toLowerCase().includes('ticket') && isTicketSaved;
+                  const actionLower = action.toLowerCase();
+                  let isDisabled = false;
+                  let buttonText = action;
+
+                  if (actionLower.includes('ticket')) {
+                    isDisabled = isTicketSaved;
+                    if(isTicketSaved) buttonText = 'Ticket Saved';
+                  } else if (actionLower.includes('bill')) {
+                    isDisabled = isBillSaved;
+                    if(isBillSaved) buttonText = 'Bill Saved';
+                  }
+
                   return (
                     <Button key={index} onClick={() => handleActionClick(action)} variant="outline" className="justify-start" disabled={isDisabled}>
                       {getActionIcon(action)}
-                      {isDisabled ? 'Ticket Saved' : action}
+                      {buttonText}
                     </Button>
                   )
               })}

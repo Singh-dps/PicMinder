@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
@@ -19,14 +20,18 @@ interface AppState {
   addScannedItem: (item: ScannedItem) => void;
   removeScannedItem: (id: string) => void;
   ticketItems: ScannedItem[];
-  removeTicketItem: (id: string) => void;
   addTicketItem: (item: ScannedItem) => void;
+  removeTicketItem: (id: string) => void;
+  billItems: ScannedItem[];
+  addBillItem: (item: ScannedItem) => void;
+  removeBillItem: (id: string) => void;
 }
 
 const AppStateContext = createContext<AppState | undefined>(undefined);
 
 const LOCAL_STORAGE_KEY_SCANS = 'jarvisScannedItems';
 const LOCAL_STORAGE_KEY_TICKETS = 'jarvisTicketItems';
+const LOCAL_STORAGE_KEY_BILLS = 'jarvisBillItems';
 
 
 export const AppStateProvider: React.FC<{ children: ReactNode }> = ({
@@ -34,6 +39,7 @@ export const AppStateProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [scannedItems, setScannedItems] = useState<ScannedItem[]>([]);
   const [ticketItems, setTicketItems] = useState<ScannedItem[]>([]);
+  const [billItems, setBillItems] = useState<ScannedItem[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
@@ -46,6 +52,10 @@ export const AppStateProvider: React.FC<{ children: ReactNode }> = ({
       if (tickets) {
         setTicketItems(JSON.parse(tickets));
       }
+      const bills = window.localStorage.getItem(LOCAL_STORAGE_KEY_BILLS);
+      if (bills) {
+        setBillItems(JSON.parse(bills));
+      }
     } catch (error) {
       console.warn('Error reading localStorage:', error);
     }
@@ -57,11 +67,12 @@ export const AppStateProvider: React.FC<{ children: ReactNode }> = ({
       try {
         window.localStorage.setItem(LOCAL_STORAGE_KEY_SCANS, JSON.stringify(scannedItems));
         window.localStorage.setItem(LOCAL_STORAGE_KEY_TICKETS, JSON.stringify(ticketItems));
+        window.localStorage.setItem(LOCAL_STORAGE_KEY_BILLS, JSON.stringify(billItems));
       } catch (error) {
         console.warn('Error writing to localStorage:', error);
       }
     }
-  }, [scannedItems, ticketItems, isLoaded]);
+  }, [scannedItems, ticketItems, billItems, isLoaded]);
 
   const addScannedItem = (item: ScannedItem) => {
     setScannedItems((prevItems) => {
@@ -88,6 +99,18 @@ export const AppStateProvider: React.FC<{ children: ReactNode }> = ({
     });
   }
 
+  const addBillItem = (item: ScannedItem) => {
+    setBillItems((prevItems) => {
+      const isDuplicate = prevItems.some(
+        (prevItem) => prevItem.photoDataUri === item.photoDataUri
+      );
+      if (isDuplicate) {
+        return prevItems;
+      }
+      return [item, ...prevItems];
+    });
+  }
+
   const removeScannedItem = (id: string) => {
     setScannedItems((prevItems) => prevItems.filter((item) => item.id !== id));
   };
@@ -95,10 +118,14 @@ export const AppStateProvider: React.FC<{ children: ReactNode }> = ({
   const removeTicketItem = (id: string) => {
     setTicketItems((prevItems) => prevItems.filter((item) => item.id !== id));
   };
+
+  const removeBillItem = (id: string) => {
+    setBillItems((prevItems) => prevItems.filter((item) => item.id !== id));
+  };
   
 
   return (
-    <AppStateContext.Provider value={{ scannedItems, addScannedItem, removeScannedItem, ticketItems, addTicketItem, removeTicketItem }}>
+    <AppStateContext.Provider value={{ scannedItems, addScannedItem, removeScannedItem, ticketItems, addTicketItem, removeTicketItem, billItems, addBillItem, removeBillItem }}>
       {children}
     </AppStateContext.Provider>
   );

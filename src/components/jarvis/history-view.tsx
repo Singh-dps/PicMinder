@@ -1,3 +1,4 @@
+
 'use client';
 
 import { ScannedItem, useAppState } from '@/context/app-state-context';
@@ -19,7 +20,7 @@ interface HistoryViewProps {
 }
 
 export function HistoryView({ scannedItems }: HistoryViewProps) {
-  const { removeScannedItem, removeTicketItem } = useAppState();
+  const { removeScannedItem, removeTicketItem, removeBillItem } = useAppState();
 
   if (scannedItems.length === 0) {
     return (
@@ -32,10 +33,13 @@ export function HistoryView({ scannedItems }: HistoryViewProps) {
 
   const handleDelete = (e: React.MouseEvent, item: ScannedItem) => {
     e.stopPropagation();
-    // Remove from both lists
+    // Remove from all lists
     removeScannedItem(item.id);
-    if(item.categorizationResult?.category === 'ticket') {
+    if(item.categorizationResult?.category === 'Tickets') {
       removeTicketItem(item.id);
+    }
+    if(item.categorizationResult?.category === 'bills') {
+      removeBillItem(item.id);
     }
   };
 

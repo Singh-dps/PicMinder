@@ -1,7 +1,9 @@
+
 export {
     BrainCircuit,
     History,
     Ticket,
+    Receipt,
     UploadCloud,
     FileImage,
     ArrowLeft,
@@ -14,4 +16,7 @@ export {
     Eye,
     Link as LinkIcon,
     Bookmark,
+    Phone,
+    Store,
+    MessageSquare,
 } from 'lucide-react';
