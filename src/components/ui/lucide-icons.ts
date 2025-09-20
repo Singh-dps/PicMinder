@@ -19,4 +19,5 @@ export {
     Phone,
     Store,
     MessageSquare,
+    HelpCircle,
 } from 'lucide-react';

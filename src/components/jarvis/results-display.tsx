@@ -6,6 +6,7 @@ import type { ExtractInformationFromPhotoOutput } from '@/ai/flows/extract-infor
 import type { CategorizePhotosAndSuggestActionsOutput } from '@/ai/flows/categorize-photos-and-suggest-actions';
 import type { ExtractEventDetailsOutput } from '@/ai/flows/extract-event-details';
 import { summarizeEventDetails } from '@/ai/flows/summarize-event-details';
+import { explainMeme } from '@/ai/flows/explain-meme';
 import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -30,6 +31,7 @@ import {
   Phone,
   Store,
   MessageSquare,
+  HelpCircle,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { ScannedItem, useAppState } from '@/context/app-state-context';
@@ -58,6 +60,9 @@ export function ResultsDisplay({
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
   const [isSummarizing, setIsSummarizing] = useState(false);
   const [currentEventSummary, setCurrentEventSummary] = useState(eventSummary);
+  const [isMemeExplanationOpen, setIsMemeExplanationOpen] = useState(false);
+  const [memeExplanation, setMemeExplanation] = useState<string | null>(null);
+  const [isExplainingMeme, setIsExplainingMeme] = useState(false);
 
   const isTicketSaved = ticketItems.some(item => item.id === scannedItem.id);
   const isBillSaved = billItems.some(item => item.id === scannedItem.id);
@@ -182,6 +187,22 @@ export function ResultsDisplay({
     }
   };
 
+  const handleExplainMemeClick = async () => {
+    setIsMemeExplanationOpen(true);
+    if (memeExplanation) return;
+
+    setIsExplainingMeme(true);
+    try {
+      const result = await explainMeme({ photoDataUri });
+      setMemeExplanation(result.explanation);
+    } catch (error) {
+      console.error("Error explaining meme:", error);
+      setMemeExplanation("Could not get an explanation for this meme.");
+    } finally {
+      setIsExplainingMeme(false);
+    }
+  };
+
   const getActionIcon = (action: string) => {
     const actionLower = action.toLowerCase();
     if (actionLower.includes('calendar')) return <CalendarPlus className="mr-2" />;
@@ -192,6 +213,7 @@ export function ResultsDisplay({
     if (actionLower.includes('direction') || actionLower.includes('go to store')) return <MapPin className="mr-2" />;
     if (actionLower.includes('bill')) return <Receipt className="mr-2" />;
     if (actionLower.includes('contact')) return <Phone className="mr-2" />;
+    if (actionLower.includes('explain meme')) return <HelpCircle className="mr-2" />;
     return null;
   };
   
@@ -213,6 +235,8 @@ export function ResultsDisplay({
       handleDirectionsClick();
     } else if (actionLower.includes('contact')) {
       handleContact();
+    } else if (actionLower.includes('explain meme')) {
+      handleExplainMemeClick();
     } else {
       toast({
         title: 'Action not implemented',
@@ -292,6 +316,23 @@ export function ResultsDisplay({
                 </div>
               ) : (
                 <p className="pt-4">{currentEventSummary}</p>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={isMemeExplanationOpen} onOpenChange={setIsMemeExplanationOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Meme Explanation</DialogTitle>
+            <DialogDescription asChild>
+              {isExplainingMeme ? (
+                <div className="flex items-center gap-2 mt-4">
+                  <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                  <span>Thinking of a witty explanation...</span>
+                </div>
+              ) : (
+                <p className="pt-4">{memeExplanation}</p>
               )}
             </DialogDescription>
           </DialogHeader>
