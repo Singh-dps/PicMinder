@@ -9,7 +9,31 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import {EventDetailsSchema} from './extract-event-details';
+
+// Re-defining EventDetailsSchema here as it can't be imported from a 'use server' file.
+const EventDetailsSchema = z.object({
+  title: z.string().describe('The title of the event.'),
+  date: z
+    .string()
+    .describe(
+      'The date of the event in YYYYMMDD format (e.g., 20240726).'
+    ),
+  startTime: z
+    .string()
+    .optional()
+    .describe(
+      'The start time of the event in HHMMSS format (e.g., 183000 for 6:30 PM).'
+    ),
+  endTime: z
+    .string()
+    .optional()
+    .describe(
+      'The end time of the event in HHMMSS format (e.g., 200000 for 8:00 PM).'
+    ),
+  location: z.string().optional().describe('The location of the event.'),
+  description: z.string().optional().describe('A brief description of the event.'),
+});
+
 
 const SummarizeEventDetailsInputSchema = z.object({
   eventDetails: EventDetailsSchema,
