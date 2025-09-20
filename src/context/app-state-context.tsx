@@ -20,6 +20,7 @@ interface AppState {
   removeScannedItem: (id: string) => void;
   ticketItems: ScannedItem[];
   removeTicketItem: (id: string) => void;
+  addTicketItem: (item: ScannedItem) => void;
 }
 
 const AppStateContext = createContext<AppState | undefined>(undefined);
@@ -75,17 +76,21 @@ export const AppStateProvider: React.FC<{ children: ReactNode }> = ({
     });
 
     if (item.categorizationResult?.category === 'ticket') {
-      setTicketItems((prevItems) => {
-        const isDuplicate = prevItems.some(
-          (prevItem) => prevItem.photoDataUri === item.photoDataUri
-        );
-        if (isDuplicate) {
-          return prevItems;
-        }
-        return [item, ...prevItems];
-      });
+      addTicketItem(item);
     }
   };
+
+  const addTicketItem = (item: ScannedItem) => {
+    setTicketItems((prevItems) => {
+      const isDuplicate = prevItems.some(
+        (prevItem) => prevItem.photoDataUri === item.photoDataUri
+      );
+      if (isDuplicate) {
+        return prevItems;
+      }
+      return [item, ...prevItems];
+    });
+  }
 
   const removeScannedItem = (id: string) => {
     setScannedItems((prevItems) => prevItems.filter((item) => item.id !== id));
@@ -97,7 +102,7 @@ export const AppStateProvider: React.FC<{ children: ReactNode }> = ({
   
 
   return (
-    <AppStateContext.Provider value={{ scannedItems, addScannedItem, removeScannedItem, ticketItems, removeTicketItem }}>
+    <AppStateContext.Provider value={{ scannedItems, addScannedItem, removeScannedItem, ticketItems, addTicketItem, removeTicketItem }}>
       {children}
     </AppStateContext.Provider>
   );

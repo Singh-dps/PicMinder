@@ -123,7 +123,9 @@ export function ResultsDisplay({
     action !== 'View Event Details' &&
     action !== 'Open Link' &&
     action !== 'Get Directions' &&
-    action !== 'Scan QR Code'
+    action !== 'Scan QR Code' &&
+    action !== 'Contact Organizer' &&
+    action !== 'Save Ticket'
   ) || [];
 
   return (

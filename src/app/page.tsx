@@ -19,7 +19,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useAppState } from '@/context/app-state-context';
 
 export default function Home() {
-  const { addScannedItem } = useAppState();
+  const { addScannedItem, addTicketItem } = useAppState();
 
   const [photoDataUri, setPhotoDataUri] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -75,14 +75,19 @@ export default function Home() {
           }
         }
 
-        addScannedItem({
+        const newItem = {
           id: new Date().toISOString(),
           photoDataUri: dataUri,
           extractionResult: extraction,
           categorizationResult: categorization,
           eventDetailsResult: eventDetails,
           eventSummary: summary,
-        });
+        };
+
+        addScannedItem(newItem);
+        if (categorization.category === 'ticket') {
+          addTicketItem(newItem);
+        }
 
 
       } catch (err) {
