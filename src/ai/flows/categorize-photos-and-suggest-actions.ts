@@ -21,7 +21,7 @@ export type CategorizePhotosAndSuggestActionsInput = z.infer<typeof CategorizePh
 
 const CategorizePhotosAndSuggestActionsOutputSchema = z.object({
   category: z.string().describe('The category of the photo (e.g., "bills", "Tickets", "Ads", "Memes", "documents").'),
-  suggestedActions: z.array(z.string()).describe('A list of up to 5 suggested actions based on the photo (e.g., "Add to Calendar", "Save Ticket", "Pay Bill").'),
+  suggestedActions: z.array(z.string()).describe('A list of up to 5 suggested actions based on the photo.'),
   qrCodeUrl: z.string().optional().describe('The URL extracted from the QR code, if present.'),
 });
 export type CategorizePhotosAndSuggestActionsOutput = z.infer<typeof CategorizePhotosAndSuggestActionsOutputSchema>;
@@ -45,7 +45,9 @@ Your primary goal is to analyze the photo and determine its most fitting categor
 - If the image is a general document, letter, or form, categorize it as "documents".
 - If a QR code is present, extract its URL for the qrCodeUrl field, but categorize the image based on its primary content (e.g., a ticket with a QR code is still a "Tickets").
 
-Based on the determined category, you can also suggest a list of up to 5 appropriate actions.
+Based on the determined category, suggest appropriate actions.
+- If the category is "bills", you MUST suggest the following 5 actions: "Save Bill", "Contact Store", "Go to store", "Open links", "Share Via whatsapp".
+- For all other categories, you can suggest a list of up to 5 appropriate actions (e.g., "Add to Calendar", "View Event Details", "Share").
 
 Analyze the photo carefully before making a decision.
 
