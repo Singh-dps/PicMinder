@@ -1,1 +1,6 @@
-// Flows will be imported for their side effects in this file.
+import { config } from 'dotenv';
+config();
+
+import '@/ai/flows/extract-information-from-photo.ts';
+import '@/ai/flows/provide-feedback-to-improve-accuracy.ts';
+import '@/ai/flows/categorize-photos-and-suggest-actions.ts';
