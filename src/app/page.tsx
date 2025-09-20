@@ -7,6 +7,7 @@ import type { ExtractEventDetailsOutput } from '@/ai/flows/extract-event-details
 import { extractInformationFromPhoto } from '@/ai/flows/extract-information-from-photo';
 import { categorizePhotosAndSuggestActions } from '@/ai/flows/categorize-photos-and-suggest-actions';
 import { extractEventDetails } from '@/ai/flows/extract-event-details';
+import { summarizeEventDetails } from '@/ai/flows/summarize-event-details';
 import { useToast } from '@/hooks/use-toast';
 import { JarvisHeader } from '@/components/jarvis/jarvis-header';
 import { PhotoUploader } from '@/components/jarvis/photo-uploader';
@@ -28,6 +29,7 @@ export default function Home() {
     useState<CategorizePhotosAndSuggestActionsOutput | null>(null);
   const [eventDetailsResult, setEventDetailsResult] =
     useState<ExtractEventDetailsOutput | null>(null);
+  const [eventSummary, setEventSummary] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const { toast } = useToast();
@@ -41,6 +43,7 @@ export default function Home() {
       setExtractionResult(null);
       setCategorizationResult(null);
       setEventDetailsResult(null);
+      setEventSummary(null);
       setIsProcessing(true);
 
       try {
@@ -52,9 +55,15 @@ export default function Home() {
         setCategorizationResult(categorization);
 
         let eventDetails: ExtractEventDetailsOutput | null = null;
-        if (categorization.suggestedActions.includes('Add to Calendar')) {
+        let summary: string | null = null;
+        if (categorization.suggestedActions.includes('View Event Details')) {
           eventDetails = await extractEventDetails({ photoDataUri: dataUri });
           setEventDetailsResult(eventDetails);
+          if (eventDetails) {
+            const summaryResult = await summarizeEventDetails({ eventDetails });
+            summary = summaryResult.summary;
+            setEventSummary(summary);
+          }
         }
 
         addScannedItem({
@@ -63,6 +72,7 @@ export default function Home() {
           extractionResult: extraction,
           categorizationResult: categorization,
           eventDetailsResult: eventDetails,
+          eventSummary: summary,
         });
 
       } catch (err) {
@@ -86,6 +96,7 @@ export default function Home() {
     setExtractionResult(null);
     setCategorizationResult(null);
     setEventDetailsResult(null);
+    setEventSummary(null);
     setIsProcessing(false);
     setError(null);
   };
@@ -137,6 +148,7 @@ export default function Home() {
                     extractionResult={extractionResult}
                     categorizationResult={categorizationResult}
                     eventDetailsResult={eventDetailsResult}
+                    eventSummary={eventSummary}
                   />
                 </>
               )}

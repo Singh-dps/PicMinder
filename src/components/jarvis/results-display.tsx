@@ -31,6 +31,7 @@ interface ResultsDisplayProps {
   extractionResult: ExtractInformationFromPhotoOutput | null;
   categorizationResult: CategorizePhotosAndSuggestActionsOutput | null;
   eventDetailsResult: ExtractEventDetailsOutput | null;
+  eventSummary: string | null;
   hideExtractedText?: boolean;
 }
 
@@ -39,12 +40,13 @@ export function ResultsDisplay({
   extractionResult,
   categorizationResult,
   eventDetailsResult,
+  eventSummary,
   hideExtractedText = false,
 }: ResultsDisplayProps) {
   const { toast } = useToast();
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
-  const [eventSummary, setEventSummary] = useState<string | null>(null);
   const [isSummarizing, setIsSummarizing] = useState(false);
+  const [currentEventSummary, setCurrentEventSummary] = useState(eventSummary);
 
   const handleLocationClick = () => {
     if (extractionResult?.address) {
@@ -95,15 +97,15 @@ export function ResultsDisplay({
   const handleViewDetailsClick = async () => {
     if (!eventDetailsResult) return;
     setIsDetailsDialogOpen(true);
-    if (eventSummary) return; // Don't re-fetch if we have it
+    if (currentEventSummary) return; 
 
     setIsSummarizing(true);
     try {
       const result = await summarizeEventDetails({ eventDetails: eventDetailsResult });
-      setEventSummary(result.summary);
+      setCurrentEventSummary(result.summary);
     } catch (error) {
       console.error("Error summarizing event details:", error);
-      setEventSummary("Could not load event summary.");
+      setCurrentEventSummary("Could not load event summary.");
     } finally {
       setIsSummarizing(false);
     }
@@ -218,7 +220,7 @@ export function ResultsDisplay({
                   <span>Generating summary...</span>
                 </div>
               ) : (
-                <p className="pt-4">{eventSummary}</p>
+                <p className="pt-4">{currentEventSummary}</p>
               )}
             </DialogDescription>
           </DialogHeader>

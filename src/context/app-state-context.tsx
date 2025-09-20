@@ -11,6 +11,7 @@ export interface ScannedItem {
   extractionResult: ExtractInformationFromPhotoOutput | null;
   categorizationResult: CategorizePhotosAndSuggestActionsOutput | null;
   eventDetailsResult: ExtractEventDetailsOutput | null;
+  eventSummary: string | null;
 }
 
 interface AppState {

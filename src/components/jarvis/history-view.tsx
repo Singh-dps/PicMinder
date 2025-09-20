@@ -78,6 +78,7 @@ export function HistoryView({ scannedItems }: HistoryViewProps) {
                 extractionResult={item.extractionResult}
                 categorizationResult={item.categorizationResult}
                 eventDetailsResult={item.eventDetailsResult}
+                eventSummary={item.eventSummary}
                 hideExtractedText={true}
               />
             </div>
