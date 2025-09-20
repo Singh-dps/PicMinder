@@ -2,9 +2,7 @@
 
 import { ScannedItem, useAppState } from '@/context/app-state-context';
 import Image from 'next/image';
-import {
-  Card,
-} from '@/components/ui/card';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -21,7 +19,7 @@ interface HistoryViewProps {
 }
 
 export function HistoryView({ scannedItems }: HistoryViewProps) {
-    const { removeScannedItem } = useAppState();
+  const { removeScannedItem } = useAppState();
 
   if (scannedItems.length === 0) {
     return (
@@ -35,14 +33,19 @@ export function HistoryView({ scannedItems }: HistoryViewProps) {
   const handleDelete = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
     removeScannedItem(id);
-  }
+  };
+
+  const formatScanTime = (isoString: string) => {
+    const date = new Date(isoString);
+    return date.toLocaleString();
+  };
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {scannedItems.map((item) => (
         <Dialog key={item.id}>
           <DialogTrigger asChild>
-            <Card className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow relative group">
+            <Card className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow relative group flex flex-col">
               <Button
                 variant="destructive"
                 size="icon"
@@ -60,6 +63,9 @@ export function HistoryView({ scannedItems }: HistoryViewProps) {
                   className="object-cover"
                 />
               </div>
+              <CardFooter className="p-2 justify-center">
+                  <p className="text-xs text-muted-foreground">{formatScanTime(item.id)}</p>
+              </CardFooter>
             </Card>
           </DialogTrigger>
           <DialogContent className="max-w-md">
@@ -67,12 +73,13 @@ export function HistoryView({ scannedItems }: HistoryViewProps) {
               <DialogTitle>Scan Results</DialogTitle>
             </DialogHeader>
             <div className="max-h-[80vh] overflow-y-auto mt-4 pr-2">
-                <ResultsDisplay
-                    photoDataUri={item.photoDataUri}
-                    extractionResult={item.extractionResult}
-                    categorizationResult={item.categorizationResult}
-                    eventDetailsResult={item.eventDetailsResult}
-                />
+              <ResultsDisplay
+                photoDataUri={item.photoDataUri}
+                extractionResult={item.extractionResult}
+                categorizationResult={item.categorizationResult}
+                eventDetailsResult={item.eventDetailsResult}
+                hideExtractedText={true}
+              />
             </div>
           </DialogContent>
         </Dialog>

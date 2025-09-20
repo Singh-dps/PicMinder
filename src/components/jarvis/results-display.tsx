@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import type { ExtractInformationFromPhotoOutput } from '@/ai/flows/extract-information-from-photo';
 import type { CategorizePhotosAndSuggestActionsOutput } from '@/ai/flows/categorize-photos-and-suggest-actions';
@@ -29,6 +31,7 @@ interface ResultsDisplayProps {
   extractionResult: ExtractInformationFromPhotoOutput | null;
   categorizationResult: CategorizePhotosAndSuggestActionsOutput | null;
   eventDetailsResult: ExtractEventDetailsOutput | null;
+  hideExtractedText?: boolean;
 }
 
 export function ResultsDisplay({
@@ -36,6 +39,7 @@ export function ResultsDisplay({
   extractionResult,
   categorizationResult,
   eventDetailsResult,
+  hideExtractedText = false,
 }: ResultsDisplayProps) {
   const { toast } = useToast();
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
@@ -181,7 +185,7 @@ export function ResultsDisplay({
           </Card>
         )}
         
-        {extractionResult?.extractedText && (
+        {extractionResult?.extractedText && !hideExtractedText && (
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
