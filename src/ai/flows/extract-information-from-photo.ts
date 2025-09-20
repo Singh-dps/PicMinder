@@ -24,6 +24,7 @@ const ExtractInformationFromPhotoOutputSchema = z.object({
   extractedText: z.string().describe('The extracted text from the photo.'),
   entities: z.array(z.string()).describe('The identified entities in the photo.'),
   visualFeatures: z.array(z.string()).describe('The identified visual features in the photo.'),
+  address: z.string().optional().describe('The physical address found in the photo, if any.'),
 });
 export type ExtractInformationFromPhotoOutput = z.infer<typeof ExtractInformationFromPhotoOutputSchema>;
 
@@ -37,11 +38,11 @@ const prompt = ai.definePrompt({
   output: {schema: ExtractInformationFromPhotoOutputSchema},
   prompt: `You are an expert AI assistant specializing in extracting information from photos.
 
-You will analyze the photo and extract the text, identify entities, and recognize visual features.
+You will analyze the photo and extract the text, identify entities, recognize visual features, and extract any physical address found.
 
 Photo: {{media url=photoDataUri}}
 
-Output the extracted text, entities, and visual features in the specified JSON format.
+Output the extracted text, entities, visual features, and address in the specified JSON format.
 `,
 });
 

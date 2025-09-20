@@ -6,11 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Lightbulb,
-  Tag,
-  BookText,
-  Shapes,
-  Sparkles,
   Play,
+  MapPin,
 } from 'lucide-react';
 
 interface ResultsDisplayProps {
@@ -24,6 +21,14 @@ export function ResultsDisplay({
   extractionResult,
   categorizationResult,
 }: ResultsDisplayProps) {
+
+  const handleLocationClick = () => {
+    if (extractionResult?.address) {
+      const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(extractionResult.address)}`;
+      window.open(googleMapsUrl, '_blank');
+    }
+  };
+
   return (
     <div className="space-y-6 pb-8">
       <Card className="overflow-hidden">
@@ -55,6 +60,23 @@ export function ResultsDisplay({
                   {categorizationResult.category}
                 </Badge>
               </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {extractionResult?.address && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <MapPin className="text-primary" />
+                <span>Location</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="mb-4">{extractionResult.address}</p>
+              <Button onClick={handleLocationClick} className="w-full">
+                Take me to Location
+              </Button>
             </CardContent>
           </Card>
         )}
