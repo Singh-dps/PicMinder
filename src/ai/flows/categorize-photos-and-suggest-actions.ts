@@ -47,7 +47,8 @@ Your primary goal is to analyze the photo and determine its most fitting categor
 
 Based on the determined category, suggest appropriate actions.
 - If the category is "bills", you MUST suggest the following 5 actions: "Save Bill", "Contact Store", "Go to store", "Open links", "Share Via whatsapp".
-- For all other categories, you can suggest a list of up to 5 appropriate actions (e.g., "Add to Calendar", "View Event Details", "Share").
+- If the category is "Tickets", suggest actions like "Add to Calendar", "View Event Details", "Contact Organizer", "Get Directions", and "Share".
+- For all other categories, you can suggest a list of up to 5 appropriate actions (e.g., "Share").
 
 Analyze the photo carefully before making a decision.
 

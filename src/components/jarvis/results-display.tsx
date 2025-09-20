@@ -96,7 +96,7 @@ export function ResultsDisplay({
     }
   };
   
-  const handleContactStore = () => {
+  const handleContact = () => {
     const phone = extractionResult?.phoneNumber;
     const email = extractionResult?.email;
 
@@ -211,8 +211,8 @@ export function ResultsDisplay({
       handleQrCodeClick();
     } else if (actionLower.includes('direction') || actionLower.includes('go to store')) {
       handleDirectionsClick();
-    } else if (actionLower.includes('contact store')) {
-      handleContactStore();
+    } else if (actionLower.includes('contact')) {
+      handleContact();
     } else {
       toast({
         title: 'Action not implemented',
