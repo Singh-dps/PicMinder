@@ -9,6 +9,7 @@ import {
   Play,
   MapPin,
   CalendarPlus,
+  Share2,
 } from 'lucide-react';
 
 interface ResultsDisplayProps {
@@ -43,8 +44,33 @@ export function ResultsDisplay({
     }
   };
 
+  const handleWhatsAppClick = () => {
+    if (eventDetailsResult) {
+      const { title, date, startTime, location } = eventDetailsResult;
+      let message = `Check out this event: ${title}`;
+      if (date) {
+        message += ` on ${date}`;
+      }
+      if (startTime) {
+        message += ` at ${startTime}`;
+      }
+      if (location) {
+        message += ` at ${location}`;
+      }
+      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+      window.open(whatsappUrl, '_blank');
+    }
+  };
+
   const hasActions = (categorizationResult && categorizationResult.suggestedActions?.length > 0) || extractionResult?.address;
   const showCalendarAction = categorizationResult?.suggestedActions.includes('Add to Calendar') && eventDetailsResult;
+  const showWhatsAppAction = categorizationResult?.suggestedActions.includes('Share on WhatsApp') && eventDetailsResult;
+
+  const otherActions = categorizationResult?.suggestedActions.filter(action =>
+    action !== 'Add to Calendar' &&
+    action !== 'Share on WhatsApp' &&
+    action !== 'Take me to Location'
+  ) || [];
 
   return (
     <div className="space-y-6 pb-8">
@@ -89,12 +115,17 @@ export function ResultsDisplay({
                   Add to Calendar
                 </Button>
               )}
-              {categorizationResult?.suggestedActions.filter(action => action !== 'Add to Calendar').map((action, index) => (
-                    <Button key={index} variant="outline" className="justify-start">
-                    {action}
-                    </Button>
-                ))}
-
+              {showWhatsAppAction && (
+                <Button onClick={handleWhatsAppClick} variant="outline" className="justify-start">
+                  <Share2 className="mr-2" />
+                  Share on WhatsApp
+                </Button>
+              )}
+              {otherActions.map((action, index) => (
+                <Button key={index} variant="outline" className="justify-start">
+                  {action}
+                </Button>
+              ))}
             </CardContent>
           </Card>
         )}
