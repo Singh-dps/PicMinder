@@ -21,7 +21,7 @@ export type ExtractEventDetailsInput = z.infer<
   typeof ExtractEventDetailsInputSchema
 >;
 
-const ExtractEventDetailsOutputSchema = z.object({
+export const EventDetailsSchema = z.object({
   title: z.string().describe('The title of the event.'),
   date: z
     .string()
@@ -43,6 +43,8 @@ const ExtractEventDetailsOutputSchema = z.object({
   location: z.string().optional().describe('The location of the event.'),
   description: z.string().optional().describe('A brief description of the event.'),
 });
+
+const ExtractEventDetailsOutputSchema = EventDetailsSchema;
 export type ExtractEventDetailsOutput = z.infer<
   typeof ExtractEventDetailsOutputSchema
 >;

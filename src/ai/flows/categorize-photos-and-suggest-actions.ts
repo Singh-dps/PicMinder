@@ -37,7 +37,7 @@ const categorizePhotosAndSuggestActionsPrompt = ai.definePrompt({
 
   Analyze the photo and determine its category (e.g., bill, ticket, event, receipt, business card).
   Suggest a list of up to 7 appropriate actions based on the photo's content.
-  - If the category is "event" or "ticket", you must include "Add to Calendar".
+  - If the category is "event" or "ticket", you must include "Add to Calendar", "View Event Details".
   - If the category is "ticket", you must include "Share on WhatsApp".
 
   Photo: {{media url=photoDataUri}}

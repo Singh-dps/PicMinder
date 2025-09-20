@@ -1,16 +1,26 @@
+import { useState } from 'react';
 import type { ExtractInformationFromPhotoOutput } from '@/ai/flows/extract-information-from-photo';
 import type { CategorizePhotosAndSuggestActionsOutput } from '@/ai/flows/categorize-photos-and-suggest-actions';
 import type { ExtractEventDetailsOutput } from '@/ai/flows/extract-event-details';
+import { summarizeEventDetails } from '@/ai/flows/summarize-event-details';
 import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
 import {
   Copy,
   Play,
   MapPin,
   CalendarPlus,
   Share2,
+  Eye,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -28,6 +38,9 @@ export function ResultsDisplay({
   eventDetailsResult,
 }: ResultsDisplayProps) {
   const { toast } = useToast();
+  const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
+  const [eventSummary, setEventSummary] = useState<string | null>(null);
+  const [isSummarizing, setIsSummarizing] = useState(false);
 
   const handleLocationClick = () => {
     if (extractionResult?.address) {
@@ -64,7 +77,7 @@ export function ResultsDisplay({
       window.open(whatsappUrl, '_blank');
     }
   };
-  
+
   const handleCopyText = () => {
     if (extractionResult?.extractedText) {
       navigator.clipboard.writeText(extractionResult.extractedText);
@@ -75,14 +88,33 @@ export function ResultsDisplay({
     }
   };
 
+  const handleViewDetailsClick = async () => {
+    if (!eventDetailsResult) return;
+    setIsDetailsDialogOpen(true);
+    if (eventSummary) return; // Don't re-fetch if we have it
+
+    setIsSummarizing(true);
+    try {
+      const result = await summarizeEventDetails({ eventDetails: eventDetailsResult });
+      setEventSummary(result.summary);
+    } catch (error) {
+      console.error("Error summarizing event details:", error);
+      setEventSummary("Could not load event summary.");
+    } finally {
+      setIsSummarizing(false);
+    }
+  };
+
   const hasActions = (categorizationResult && categorizationResult.suggestedActions?.length > 0) || extractionResult?.address;
   const showCalendarAction = categorizationResult?.suggestedActions.includes('Add to Calendar') && eventDetailsResult;
   const showWhatsAppAction = categorizationResult?.suggestedActions.includes('Share on WhatsApp') && eventDetailsResult;
+  const showViewDetailsAction = categorizationResult?.suggestedActions.includes('View Event Details') && eventDetailsResult;
 
   const otherActions = categorizationResult?.suggestedActions.filter(action =>
     action !== 'Add to Calendar' &&
     action !== 'Share on WhatsApp' &&
-    action !== 'Take me to Location'
+    action !== 'Take me to Location' &&
+    action !== 'View Event Details'
   ) || [];
 
   return (
@@ -134,6 +166,12 @@ export function ResultsDisplay({
                   Share on WhatsApp
                 </Button>
               )}
+               {showViewDetailsAction && (
+                <Button onClick={handleViewDetailsClick} variant="outline" className="justify-start">
+                  <Eye className="mr-2" />
+                  View Event Details
+                </Button>
+              )}
               {otherActions.map((action, index) => (
                 <Button key={index} variant="outline" className="justify-start">
                   {action}
@@ -164,6 +202,24 @@ export function ResultsDisplay({
           </Card>
         )}
       </div>
+
+      <Dialog open={isDetailsDialogOpen} onOpenChange={setIsDetailsDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Event Details</DialogTitle>
+            <DialogDescription asChild>
+              {isSummarizing ? (
+                <div className="flex items-center gap-2 mt-4">
+                   <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                  <span>Generating summary...</span>
+                </div>
+              ) : (
+                <p className="pt-4">{eventSummary}</p>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
