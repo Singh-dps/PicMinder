@@ -20,7 +20,7 @@ const CategorizePhotosAndSuggestActionsInputSchema = z.object({
 export type CategorizePhotosAndSuggestActionsInput = z.infer<typeof CategorizePhotosAndSuggestActionsInputSchema>;
 
 const CategorizePhotosAndSuggestActionsOutputSchema = z.object({
-  category: z.string().describe('The category of the photo (e.g., bill, ticket, event, qr_code).'),
+  category: z.string().describe('The category of the photo (e.g., "bill", "ticket", "event", "qr_code").'),
   suggestedActions: z.array(z.string()).describe('A list of up to 7 suggested actions based on the photo (e.g., "Add to Calendar", "Create a contact").'),
   qrCodeUrl: z.string().optional().describe('The URL extracted from the QR code, if present.'),
 });
@@ -36,11 +36,9 @@ const categorizePhotosAndSuggestActionsPrompt = ai.definePrompt({
   output: {schema: CategorizePhotosAndSuggestActionsOutputSchema},
   prompt: `You are an AI assistant designed to categorize photos and suggest relevant actions.
 
-  Analyze the photo and determine its category (e.g., bill, ticket, event, receipt, business card, qr_code).
-  Suggest a list of up to 7 appropriate actions based on the photo's content. It is very important that you do NOT suggest any location-based actions like "Get Directions", "Take me to Location", or actions like "Scan QR Code", or "Contact Organizer".
-  - If the category is "event" or "ticket", you must include "Add to Calendar", "View Event Details".
-  - If the category is "ticket", you must include "Save Ticket" and "Share on WhatsApp".
-  - If the photo contains a QR code, set the category to "qr_code", extract the URL from it, and include "Open Link" in the suggested actions. Do NOT suggest "Scan QR Code". Populate the qrCodeUrl field with the extracted URL.
+  Analyze the photo and determine its category.
+  Suggest a list of up to 7 appropriate actions based on the photo's content.
+  - If the photo contains a QR code, set the category to "qr_code", extract the URL from it, and populate the qrCodeUrl field.
 
   Photo: {{media url=photoDataUri}}
   `,

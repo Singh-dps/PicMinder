@@ -24,6 +24,7 @@ import {
   Eye,
   Link as LinkIcon,
   Bookmark,
+  MapPin,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { ScannedItem, useAppState } from '@/context/app-state-context';
@@ -69,6 +70,23 @@ export function ResultsDisplay({
       const dates = `${date}${T}/${date}${TEnd}`;
       const calendarUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${dates}&details=${encodeURIComponent(description || '')}&location=${encodeURIComponent(location || '')}`;
       window.open(calendarUrl, '_blank');
+    }
+  };
+
+  const handleDirectionsClick = () => {
+    let address = eventDetailsResult?.location;
+    if (!address) {
+      address = extractionResult?.address;
+    }
+    if (address) {
+      const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+      window.open(mapsUrl, '_blank');
+    } else {
+      toast({
+        variant: 'destructive',
+        title: 'No Location Found',
+        description: 'Could not find a location or address in the photo.',
+      });
     }
   };
 
@@ -127,23 +145,39 @@ export function ResultsDisplay({
     }
   };
 
-  const hasActions = (categorizationResult && categorizationResult.suggestedActions?.length > 0);
-  const showCalendarAction = categorizationResult?.suggestedActions.includes('Add to Calendar') && eventDetailsResult;
-  const showWhatsAppAction = categorizationResult?.suggestedActions.includes('Share on WhatsApp') && eventDetailsResult;
-  const showViewDetailsAction = categorizationResult?.suggestedActions.includes('View Event Details') && eventDetailsResult;
-  const showOpenLinkAction = categorizationResult?.suggestedActions.includes('Open Link') && categorizationResult?.qrCodeUrl;
-  const showSaveTicketAction = categorizationResult?.suggestedActions.includes('Save Ticket');
+  const getActionIcon = (action: string) => {
+    if (action.toLowerCase().includes('calendar')) return <CalendarPlus className="mr-2" />;
+    if (action.toLowerCase().includes('ticket')) return <Bookmark className="mr-2" />;
+    if (action.toLowerCase().includes('share')) return <Share2 className="mr-2" />;
+    if (action.toLowerCase().includes('details')) return <Eye className="mr-2" />;
+    if (action.toLowerCase().includes('link')) return <LinkIcon className="mr-2" />;
+    if (action.toLowerCase().includes('direction')) return <MapPin className="mr-2" />;
+    return null;
+  };
+  
+  const handleActionClick = (action: string) => {
+    const actionLower = action.toLowerCase();
+    if (actionLower.includes('calendar')) {
+      handleCalendarClick();
+    } else if (actionLower.includes('ticket')) {
+      handleSaveTicket();
+    } else if (actionLower.includes('share')) {
+      handleWhatsAppClick();
+    } else if (actionLower.includes('details')) {
+      handleViewDetailsClick();
+    } else if (actionLower.includes('link')) {
+      handleQrCodeClick();
+    } else if (actionLower.includes('direction')) {
+      handleDirectionsClick();
+    } else {
+      toast({
+        title: 'Action not implemented',
+        description: `The action "${action}" is not yet supported.`,
+      });
+    }
+  };
 
-  const otherActions = categorizationResult?.suggestedActions.filter(action =>
-    action !== 'Add to Calendar' &&
-    action !== 'Share on WhatsApp' &&
-    action !== 'View Event Details' &&
-    action !== 'Open Link' &&
-    action !== 'Save Ticket' &&
-    action !== 'Get Directions' &&
-    action !== 'Scan QR Code' &&
-    action !== 'Contact Organizer'
-  ) || [];
+  const hasActions = (categorizationResult && categorizationResult.suggestedActions?.length > 0);
 
   return (
     <div className="space-y-6 pb-8">
@@ -176,41 +210,15 @@ export function ResultsDisplay({
               </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col space-y-2">
-              {showCalendarAction && (
-                <Button onClick={handleCalendarClick} variant="outline" className="justify-start">
-                  <CalendarPlus className="mr-2" />
-                  Add to Calendar
-                </Button>
-              )}
-               {showSaveTicketAction && (
-                <Button onClick={handleSaveTicket} variant="outline" className="justify-start" disabled={isTicketSaved}>
-                  <Bookmark className="mr-2" />
-                  {isTicketSaved ? 'Ticket Saved' : 'Save Ticket'}
-                </Button>
-              )}
-              {showWhatsAppAction && (
-                <Button onClick={handleWhatsAppClick} variant="outline" className="justify-start">
-                  <Share2 className="mr-2" />
-                  Share on WhatsApp
-                </Button>
-              )}
-               {showViewDetailsAction && (
-                <Button onClick={handleViewDetailsClick} variant="outline" className="justify-start">
-                  <Eye className="mr-2" />
-                  View Event Details
-                </Button>
-              )}
-              {showOpenLinkAction && (
-                <Button onClick={handleQrCodeClick} variant="outline" className="justify-start">
-                    <LinkIcon className="mr-2" />
-                    Open Link
-                </Button>
-              )}
-              {otherActions.map((action, index) => (
-                <Button key={index} variant="outline" className="justify-start">
-                  {action}
-                </Button>
-              ))}
+              {categorizationResult.suggestedActions.map((action, index) => {
+                  const isDisabled = action.toLowerCase().includes('ticket') && isTicketSaved;
+                  return (
+                    <Button key={index} onClick={() => handleActionClick(action)} variant="outline" className="justify-start" disabled={isDisabled}>
+                      {getActionIcon(action)}
+                      {isDisabled ? 'Ticket Saved' : action}
+                    </Button>
+                  )
+              })}
             </CardContent>
           </Card>
         )}
