@@ -51,7 +51,19 @@ export const AppStateProvider: React.FC<{ children: ReactNode }> = ({
   }, [scannedItems, isLoaded]);
 
   const addScannedItem = (item: ScannedItem) => {
-    setScannedItems((prevItems) => [item, ...prevItems]);
+    setScannedItems((prevItems) => {
+      const isDuplicate = prevItems.some(
+        (prevItem) =>
+          prevItem.extractionResult?.extractedText &&
+          item.extractionResult?.extractedText &&
+          prevItem.extractionResult.extractedText === item.extractionResult.extractedText
+      );
+
+      if (isDuplicate) {
+        return prevItems;
+      }
+      return [item, ...prevItems];
+    });
   };
 
   return (
