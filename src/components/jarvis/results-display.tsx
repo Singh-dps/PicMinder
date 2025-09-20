@@ -32,6 +32,7 @@ import {
   Store,
   MessageSquare,
   HelpCircle,
+  Globe,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { ScannedItem, useAppState } from '@/context/app-state-context';
@@ -70,6 +71,18 @@ export function ResultsDisplay({
   const handleQrCodeClick = () => {
     if (categorizationResult?.qrCodeUrl) {
       window.open(categorizationResult.qrCodeUrl, '_blank');
+    }
+  };
+
+  const handleVisitWebsite = () => {
+    if (categorizationResult?.websiteUrl) {
+      window.open(categorizationResult.websiteUrl, '_blank');
+    } else {
+       toast({
+        variant: 'destructive',
+        title: 'No Website Found',
+        description: 'Could not find a website in the ad.',
+      });
     }
   };
 
@@ -242,6 +255,7 @@ export function ResultsDisplay({
     if (actionLower.includes('bill')) return <Receipt className="mr-2" />;
     if (actionLower.includes('contact')) return <Phone className="mr-2" />;
     if (actionLower.includes('explain meme')) return <HelpCircle className="mr-2" />;
+    if (actionLower.includes('visit website')) return <Globe className="mr-2" />;
     return null;
   };
   
@@ -269,6 +283,8 @@ export function ResultsDisplay({
       handleContact();
     } else if (actionLower.includes('explain meme')) {
       handleExplainMemeClick();
+    } else if (actionLower.includes('visit website')) {
+      handleVisitWebsite();
     } else {
       toast({
         title: 'Action not implemented',

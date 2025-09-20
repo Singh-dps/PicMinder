@@ -20,4 +20,5 @@ export {
     Store,
     MessageSquare,
     HelpCircle,
+    Globe,
 } from 'lucide-react';
