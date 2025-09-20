@@ -1,11 +1,21 @@
-import { BrainCircuit } from 'lucide-react';
+import { BrainCircuit, History } from 'lucide-react';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 export function JarvisHeader() {
   return (
-    <header className="flex items-center justify-center p-4 border-b border-border/50">
-      <div className="flex items-center gap-3 text-primary">
+    <header className="flex items-center justify-between p-4 border-b border-border/50">
+      <Link href="/" className="flex items-center gap-3 text-primary">
         <BrainCircuit size={32} />
         <h1 className="text-3xl font-bold tracking-tight">Jarvis</h1>
+      </Link>
+      <div className="flex items-center gap-2">
+        <Link href="/history" passHref>
+          <Button variant="ghost" size="icon">
+            <History className="h-5 w-5" />
+            <span className="sr-only">History</span>
+          </Button>
+        </Link>
       </div>
     </header>
   );

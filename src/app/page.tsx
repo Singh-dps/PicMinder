@@ -15,8 +15,11 @@ import { ResultsDisplay } from '@/components/jarvis/results-display';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useAppState } from '@/context/app-state-context';
 
 export default function Home() {
+  const { addScannedItem } = useAppState();
+
   const [photoDataUri, setPhotoDataUri] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [extractionResult, setExtractionResult] =
@@ -48,10 +51,19 @@ export default function Home() {
         setExtractionResult(extraction);
         setCategorizationResult(categorization);
 
+        let eventDetails: ExtractEventDetailsOutput | null = null;
         if (categorization.suggestedActions.includes('Add to Calendar')) {
-          const eventDetails = await extractEventDetails({ photoDataUri: dataUri });
+          eventDetails = await extractEventDetails({ photoDataUri: dataUri });
           setEventDetailsResult(eventDetails);
         }
+
+        addScannedItem({
+          id: new Date().toISOString(),
+          photoDataUri: dataUri,
+          extractionResult: extraction,
+          categorizationResult: categorization,
+          eventDetailsResult: eventDetails,
+        });
 
       } catch (err) {
         console.error(err);
