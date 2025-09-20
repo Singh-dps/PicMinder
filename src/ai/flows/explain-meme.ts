@@ -38,7 +38,7 @@ const prompt = ai.definePrompt({
   output: {schema: ExplainMemeOutputSchema},
   prompt: `You are a meme expert with a great sense of humor.
 
-Analyze the provided photo of a meme and provide a witty and informative explanation. Describe the meme's format, origin (if known), and why it's funny.
+Analyze the provided photo of a meme and provide a witty, short, and snappy explanation. Describe the meme's format, origin (if known), and why it's funny in a concise way.
 
 Photo: {{media url=photoDataUri}}
 
