@@ -95,6 +95,23 @@ export function ResultsDisplay({
       });
     }
   };
+  
+  const handleContactStore = () => {
+    const phone = extractionResult?.phoneNumber;
+    const email = extractionResult?.email;
+
+    if (phone) {
+      window.open(`tel:${phone}`);
+    } else if (email) {
+      window.open(`mailto:${email}`);
+    } else {
+      toast({
+        variant: 'destructive',
+        title: 'No Contact Info',
+        description: 'Could not find a phone number or email in the photo.',
+      });
+    }
+  };
 
   const handleWhatsAppClick = () => {
     if (eventDetailsResult) {
@@ -194,6 +211,8 @@ export function ResultsDisplay({
       handleQrCodeClick();
     } else if (actionLower.includes('direction') || actionLower.includes('go to store')) {
       handleDirectionsClick();
+    } else if (actionLower.includes('contact store')) {
+      handleContactStore();
     } else {
       toast({
         title: 'Action not implemented',
