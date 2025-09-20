@@ -51,14 +51,23 @@ export default function Home() {
           extractInformationFromPhoto({ photoDataUri: dataUri }),
           categorizePhotosAndSuggestActions({ photoDataUri: dataUri }),
         ]);
+
         setExtractionResult(extraction);
         setCategorizationResult(categorization);
 
         let eventDetails: ExtractEventDetailsOutput | null = null;
         let summary: string | null = null;
+
         if (categorization.suggestedActions.includes('View Event Details')) {
-          eventDetails = await extractEventDetails({ photoDataUri: dataUri });
+          // Now we run this in parallel with the above
+          const eventDetailsPromise = extractEventDetails({ photoDataUri: dataUri });
+          
+          // Show initial results first
+          setIsProcessing(false);
+
+          eventDetails = await eventDetailsPromise;
           setEventDetailsResult(eventDetails);
+
           if (eventDetails) {
             const summaryResult = await summarizeEventDetails({ eventDetails });
             summary = summaryResult.summary;
@@ -85,11 +94,15 @@ export default function Home() {
             'An unexpected error occurred while analyzing your photo.',
         });
       } finally {
-        setIsProcessing(false);
+        // This might be set to false earlier now
+        if (isProcessing) {
+          setIsProcessing(false);
+        }
       }
     };
     reader.readAsDataURL(file);
   };
+
 
   const handleReset = () => {
     setPhotoDataUri(null);
