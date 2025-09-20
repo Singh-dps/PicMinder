@@ -150,7 +150,7 @@ export function ResultsDisplay({
     if (action.toLowerCase().includes('ticket')) return <Bookmark className="mr-2" />;
     if (action.toLowerCase().includes('share')) return <Share2 className="mr-2" />;
     if (action.toLowerCase().includes('details')) return <Eye className="mr-2" />;
-    if (action.toLowerCase().includes('link')) return <LinkIcon className="mr-2" />;
+    if (action.toLowerCase().includes('qr code')) return <LinkIcon className="mr-2" />;
     if (action.toLowerCase().includes('direction')) return <MapPin className="mr-2" />;
     return null;
   };
@@ -165,7 +165,7 @@ export function ResultsDisplay({
       handleWhatsAppClick();
     } else if (actionLower.includes('details')) {
       handleViewDetailsClick();
-    } else if (actionLower.includes('link')) {
+    } else if (actionLower.includes('qr code')) {
       handleQrCodeClick();
     } else if (actionLower.includes('direction')) {
       handleDirectionsClick();

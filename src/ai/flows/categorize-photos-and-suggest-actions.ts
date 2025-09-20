@@ -21,7 +21,7 @@ export type CategorizePhotosAndSuggestActionsInput = z.infer<typeof CategorizePh
 
 const CategorizePhotosAndSuggestActionsOutputSchema = z.object({
   category: z.string().describe('The category of the photo (e.g., "bill", "ticket", "event", "qr_code", "receipt", "business_card", "document", "other").'),
-  suggestedActions: z.array(z.string()).describe('A list of up to 5 suggested actions based on the photo (e.g., "Add to Calendar", "Save Ticket", "Pay Bill").'),
+  suggestedActions: z.array(z.string()).describe('A list of up to 5 suggested actions based on the photo (e.g., "Add to Calendar", "Save Ticket", "Pay Bill", "Scan QR Code").'),
   qrCodeUrl: z.string().optional().describe('The URL extracted from the QR code, if present.'),
 });
 export type CategorizePhotosAndSuggestActionsOutput = z.infer<typeof CategorizePhotosAndSuggestActionsOutputSchema>;
@@ -40,7 +40,7 @@ Your primary goal is to analyze the photo and determine its most fitting categor
 
 Based on the determined category, suggest a list of up to 5 appropriate actions.
 
-- If, and only if, a QR code is clearly visible and scannable in the photo, set the category to "qr_code", extract the URL from it, and populate the qrCodeUrl field. Do not categorize an image as a QR code if it contains other primary content like a bill or a ticket, even if a small QR code is present. In such cases, categorize based on the main subject.
+- If, and only if, a QR code is clearly visible and scannable in the photo, set the category to "qr_code", extract the URL from it, populate the qrCodeUrl field, and suggest "Scan QR Code" as an action. Do not categorize an image as a QR code if it contains other primary content like a bill or a ticket, even if a small QR code is present. In such cases, categorize based on the main subject.
 - If the image is a bill or invoice, suggest actions like "Pay Bill" or "Set Reminder".
 - If the image is a ticket or event invitation, suggest actions like "Save Ticket" and "Add to Calendar".
 
