@@ -25,7 +25,6 @@ import {
   Link as LinkIcon,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useAppState } from '@/context/app-state-context';
 
 interface ResultsDisplayProps {
   photoDataUri: string;
@@ -45,7 +44,6 @@ export function ResultsDisplay({
   hideExtractedText = false,
 }: ResultsDisplayProps) {
   const { toast } = useToast();
-  const { isTicketSaved } = useAppState();
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
   const [isSummarizing, setIsSummarizing] = useState(false);
   const [currentEventSummary, setCurrentEventSummary] = useState(eventSummary);

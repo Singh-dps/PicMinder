@@ -16,10 +16,9 @@ import { X } from 'lucide-react';
 
 interface HistoryViewProps {
   scannedItems: ScannedItem[];
-  useTicketRemover?: boolean;
 }
 
-export function HistoryView({ scannedItems, useTicketRemover = false }: HistoryViewProps) {
+export function HistoryView({ scannedItems }: HistoryViewProps) {
   const { removeScannedItem, removeTicketItem } = useAppState();
 
   if (scannedItems.length === 0) {
@@ -31,12 +30,12 @@ export function HistoryView({ scannedItems, useTicketRemover = false }: HistoryV
     );
   }
 
-  const handleDelete = (e: React.MouseEvent, id: string) => {
+  const handleDelete = (e: React.MouseEvent, item: ScannedItem) => {
     e.stopPropagation();
-    if (useTicketRemover) {
-      removeTicketItem(id);
-    } else {
-      removeScannedItem(id);
+    // Remove from both lists
+    removeScannedItem(item.id);
+    if(item.categorizationResult?.category === 'ticket') {
+      removeTicketItem(item.id);
     }
   };
 
@@ -55,7 +54,7 @@ export function HistoryView({ scannedItems, useTicketRemover = false }: HistoryV
                 variant="destructive"
                 size="icon"
                 className="absolute top-2 right-2 z-10 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
-                onClick={(e) => handleDelete(e, item.id)}
+                onClick={(e) => handleDelete(e, item)}
               >
                 <X className="h-4 w-4" />
                 <span className="sr-only">Delete</span>

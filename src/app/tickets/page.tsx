@@ -108,13 +108,13 @@ export default function TicketsPage() {
                   <TabsTrigger value="Past">Past ({categorizedTickets.Past.length})</TabsTrigger>
                 </TabsList>
                 <TabsContent value="Upcoming" className="flex-1 mt-4">
-                  <HistoryView scannedItems={categorizedTickets.Upcoming} useTicketRemover={true} />
+                  <HistoryView scannedItems={categorizedTickets.Upcoming} />
                 </TabsContent>
                 <TabsContent value="Ongoing" className="flex-1 mt-4">
-                  <HistoryView scannedItems={categorizedTickets.Ongoing} useTicketRemover={true} />
+                  <HistoryView scannedItems={categorizedTickets.Ongoing} />
                 </TabsContent>
                 <TabsContent value="Past" className="flex-1 mt-4">
-                  <HistoryView scannedItems={categorizedTickets.Past} useTicketRemover={true} />
+                  <HistoryView scannedItems={categorizedTickets.Past} />
                 </TabsContent>
               </Tabs>
             ) : (

@@ -19,9 +19,7 @@ interface AppState {
   addScannedItem: (item: ScannedItem) => void;
   removeScannedItem: (id: string) => void;
   ticketItems: ScannedItem[];
-  addTicketItem: (item: ScannedItem) => void;
   removeTicketItem: (id: string) => void;
-  isTicketSaved: (photoDataUri: string) => boolean;
 }
 
 const AppStateContext = createContext<AppState | undefined>(undefined);
@@ -75,34 +73,31 @@ export const AppStateProvider: React.FC<{ children: ReactNode }> = ({
       }
       return [item, ...prevItems];
     });
+
+    if (item.categorizationResult?.category === 'ticket') {
+      setTicketItems((prevItems) => {
+        const isDuplicate = prevItems.some(
+          (prevItem) => prevItem.photoDataUri === item.photoDataUri
+        );
+        if (isDuplicate) {
+          return prevItems;
+        }
+        return [item, ...prevItems];
+      });
+    }
   };
 
   const removeScannedItem = (id: string) => {
     setScannedItems((prevItems) => prevItems.filter((item) => item.id !== id));
   };
 
-  const addTicketItem = (item: ScannedItem) => {
-    setTicketItems((prevItems) => {
-      const isDuplicate = prevItems.some(
-        (prevItem) => prevItem.photoDataUri === item.photoDataUri
-      );
-      if (isDuplicate) {
-        return prevItems;
-      }
-      return [item, ...prevItems];
-    });
-  };
-
   const removeTicketItem = (id: string) => {
     setTicketItems((prevItems) => prevItems.filter((item) => item.id !== id));
   };
   
-  const isTicketSaved = (photoDataUri: string) => {
-    return ticketItems.some((item) => item.photoDataUri === photoDataUri);
-  }
 
   return (
-    <AppStateContext.Provider value={{ scannedItems, addScannedItem, removeScannedItem, ticketItems, addTicketItem, removeTicketItem, isTicketSaved }}>
+    <AppStateContext.Provider value={{ scannedItems, addScannedItem, removeScannedItem, ticketItems, removeTicketItem }}>
       {children}
     </AppStateContext.Provider>
   );
