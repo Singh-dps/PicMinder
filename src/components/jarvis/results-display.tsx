@@ -203,6 +203,34 @@ export function ResultsDisplay({
     }
   };
 
+  const handleShareImage = async () => {
+    try {
+      const response = await fetch(photoDataUri);
+      const blob = await response.blob();
+      const file = new File([blob], 'meme.png', { type: blob.type });
+
+      if (navigator.share && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: 'Check out this meme!',
+          text: 'Sent from Jarvis',
+        });
+      } else {
+        // Fallback for browsers that don't support Web Share API or file sharing
+        handleWhatsAppClick();
+      }
+    } catch (error) {
+      console.error('Error sharing image:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Sharing Failed',
+        description: 'Could not share the image.',
+      });
+      // Fallback to text sharing
+      handleWhatsAppClick();
+    }
+  };
+
   const getActionIcon = (action: string) => {
     const actionLower = action.toLowerCase();
     if (actionLower.includes('calendar')) return <CalendarPlus className="mr-2" />;
@@ -226,7 +254,11 @@ export function ResultsDisplay({
     } else if (actionLower.includes('bill')) {
       handleSaveBill();
     } else if (actionLower.includes('share')) {
-      handleWhatsAppClick();
+      if (categorizationResult?.category === 'Memes') {
+        handleShareImage();
+      } else {
+        handleWhatsAppClick();
+      }
     } else if (actionLower.includes('details')) {
       handleViewDetailsClick();
     } else if (actionLower.includes('scan qr code') || actionLower.includes('open links')) {
@@ -341,3 +373,5 @@ export function ResultsDisplay({
     </div>
   );
 }
+
+    
