@@ -19,7 +19,6 @@ import {
 import {
   Copy,
   Play,
-  MapPin,
   CalendarPlus,
   Share2,
   Eye,
@@ -51,13 +50,6 @@ export function ResultsDisplay({
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
   const [isSummarizing, setIsSummarizing] = useState(false);
   const [currentEventSummary, setCurrentEventSummary] = useState(eventSummary);
-
-  const handleLocationClick = () => {
-    if (extractionResult?.address) {
-      const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(extractionResult.address)}`;
-      window.open(googleMapsUrl, '_blank');
-    }
-  };
 
   const handleQrCodeClick = () => {
     if (categorizationResult?.qrCodeUrl) {
@@ -138,7 +130,7 @@ export function ResultsDisplay({
 
   const isCurrentTicketSaved = categorizationResult?.category === 'ticket' && isTicketSaved(photoDataUri);
 
-  const hasActions = (categorizationResult && categorizationResult.suggestedActions?.length > 0) || extractionResult?.address;
+  const hasActions = (categorizationResult && categorizationResult.suggestedActions?.length > 0);
   const showCalendarAction = categorizationResult?.suggestedActions.includes('Add to Calendar') && eventDetailsResult;
   const showWhatsAppAction = categorizationResult?.suggestedActions.includes('Share on WhatsApp') && eventDetailsResult;
   const showViewDetailsAction = categorizationResult?.suggestedActions.includes('View Event Details') && eventDetailsResult;
@@ -149,7 +141,6 @@ export function ResultsDisplay({
   const otherActions = categorizationResult?.suggestedActions.filter(action =>
     action !== 'Add to Calendar' &&
     action !== 'Share on WhatsApp' &&
-    action !== 'Take me to Location' &&
     action !== 'View Event Details' &&
     action !== 'Open Link'
   ) || [];
@@ -189,12 +180,6 @@ export function ResultsDisplay({
                 <Button onClick={handleSaveTicket} disabled={isCurrentTicketSaved} variant="outline" className="justify-start">
                   <Save className="mr-2" />
                   {isCurrentTicketSaved ? 'Ticket Saved' : 'Save Ticket'}
-                </Button>
-              )}
-              {extractionResult?.address && (
-                <Button onClick={handleLocationClick} variant="outline" className="justify-start">
-                  <MapPin className="mr-2" />
-                  Take me to Location
                 </Button>
               )}
               {showCalendarAction && (
