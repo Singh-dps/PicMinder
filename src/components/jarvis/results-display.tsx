@@ -142,7 +142,8 @@ export function ResultsDisplay({
     action !== 'Add to Calendar' &&
     action !== 'Share on WhatsApp' &&
     action !== 'View Event Details' &&
-    action !== 'Open Link'
+    action !== 'Open Link' &&
+    action !== 'Get Directions'
   ) || [];
 
   return (
