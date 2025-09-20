@@ -21,7 +21,7 @@ export type CategorizePhotosAndSuggestActionsInput = z.infer<typeof CategorizePh
 
 const CategorizePhotosAndSuggestActionsOutputSchema = z.object({
   category: z.string().describe('The category of the photo (e.g., bill, ticket, event).'),
-  suggestedAction: z.string().describe('A suggested action based on the photo (e.g., add a reminder, save to calendar).'),
+  suggestedActions: z.array(z.string()).describe('A list of up to 7 suggested actions based on the photo (e.g., "Add a reminder", "Save to calendar").'),
 });
 export type CategorizePhotosAndSuggestActionsOutput = z.infer<typeof CategorizePhotosAndSuggestActionsOutputSchema>;
 
@@ -36,11 +36,10 @@ const categorizePhotosAndSuggestActionsPrompt = ai.definePrompt({
   prompt: `You are an AI assistant designed to categorize photos and suggest relevant actions.
 
   Analyze the photo and determine its category (e.g., bill, ticket, event, receipt, business card).
-  Suggest an appropriate action based on the photo's content (e.g., add a reminder, save to calendar, create a contact).
+  Suggest a list of up to 7 appropriate actions based on the photo's content (e.g., "Add a reminder", "Save to calendar", "Create a contact").
 
   Photo: {{media url=photoDataUri}}
-  Category: 
-  Suggested Action:`,
+  `,
 });
 
 const categorizePhotosAndSuggestActionsFlow = ai.defineFlow(

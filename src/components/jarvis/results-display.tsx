@@ -59,18 +59,20 @@ export function ResultsDisplay({
           </Card>
         )}
 
-        {categorizationResult && (
+        {categorizationResult && categorizationResult.suggestedActions?.length > 0 && (
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Play className="text-primary" />
-                <span>Suggested Action</span>
+                <span>Suggested Actions</span>
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <Button>
-                {categorizationResult.suggestedAction}
-              </Button>
+            <CardContent className="flex flex-col space-y-2">
+              {categorizationResult.suggestedActions.map((action, index) => (
+                <Button key={index} variant="outline" className="justify-start">
+                  {action}
+                </Button>
+              ))}
             </CardContent>
           </Card>
         )}
