@@ -278,26 +278,6 @@ export function ResultsDisplay({
           </Card>
         )}
         
-        {extractionResult?.extractedText && !hideExtractedText && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <span className="flex items-center gap-2">
-                  <Copy className="text-primary" />
-                  <span>Extracted Text</span>
-                </span>
-                <Button variant="ghost" size="icon" onClick={handleCopyText}>
-                  <Copy className="h-4 w-4" />
-                </Button>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-                {extractionResult.extractedText}
-              </p>
-            </CardContent>
-          </Card>
-        )}
       </div>
 
       <Dialog open={isDetailsDialogOpen} onOpenChange={setIsDetailsDialogOpen}>
