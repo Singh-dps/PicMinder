@@ -3,6 +3,7 @@ import type { CategorizePhotosAndSuggestActionsOutput } from '@/ai/flows/categor
 import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Lightbulb,
   Tag,
@@ -121,9 +122,9 @@ export function ResultsDisplay({
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="font-semibold text-accent-foreground bg-accent/20 border border-accent rounded-md p-3">
+              <Button>
                 {categorizationResult.suggestedAction}
-              </p>
+              </Button>
             </CardContent>
           </Card>
         )}
