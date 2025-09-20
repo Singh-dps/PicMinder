@@ -29,6 +29,9 @@ export function ResultsDisplay({
     }
   };
 
+  const hasActions = (categorizationResult && categorizationResult.suggestedActions?.length > 0) || extractionResult?.address;
+
+
   return (
     <div className="space-y-6 pb-8">
       <Card className="overflow-hidden">
@@ -64,24 +67,7 @@ export function ResultsDisplay({
           </Card>
         )}
 
-        {extractionResult?.address && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MapPin className="text-primary" />
-                <span>Location</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="mb-4">{extractionResult.address}</p>
-              <Button onClick={handleLocationClick} className="w-full">
-                Take me to Location
-              </Button>
-            </CardContent>
-          </Card>
-        )}
-
-        {categorizationResult && categorizationResult.suggestedActions?.length > 0 && (
+        {hasActions && (
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -90,7 +76,13 @@ export function ResultsDisplay({
               </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col space-y-2">
-              {categorizationResult.suggestedActions.map((action, index) => (
+              {extractionResult?.address && (
+                <Button onClick={handleLocationClick} variant="outline" className="justify-start">
+                  <MapPin className="mr-2" />
+                  Take me to Location
+                </Button>
+              )}
+              {categorizationResult?.suggestedActions.map((action, index) => (
                 <Button key={index} variant="outline" className="justify-start">
                   {action}
                 </Button>
