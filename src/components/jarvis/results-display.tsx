@@ -44,6 +44,14 @@ export function ResultsDisplay({
         </div>
       </Card>
 
+      {categorizationResult?.category && (
+        <div className="flex justify-center">
+          <Badge variant="secondary" className="text-base py-1 px-4 capitalize">
+            {categorizationResult.category}
+          </Badge>
+        </div>
+      )}
+
       <div className="space-y-4">
         {hasActions && (
           <Card>
