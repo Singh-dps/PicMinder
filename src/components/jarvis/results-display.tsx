@@ -59,49 +59,6 @@ export function ResultsDisplay({
           </Card>
         )}
 
-        {extractionResult && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Sparkles className="text-primary" />
-                <span>Extracted Details</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {extractionResult.entities &&
-                extractionResult.entities.length > 0 && (
-                  <div>
-                    <h3 className="font-semibold flex items-center gap-2 mb-2">
-                      <Tag size={18} />
-                      Entities
-                    </h3>
-                    <div className="flex flex-wrap gap-2">
-                      {extractionResult.entities.map((entity) => (
-                        <Badge key={entity}>{entity}</Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              {extractionResult.visualFeatures &&
-                extractionResult.visualFeatures.length > 0 && (
-                  <div>
-                    <h3 className="font-semibold flex items-center gap-2 mb-2">
-                      <Shapes size={18} />
-                      Visual Features
-                    </h3>
-                    <div className="flex flex-wrap gap-2">
-                      {extractionResult.visualFeatures.map((feature) => (
-                        <Badge variant="outline" key={feature}>
-                          {feature}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
-            </CardContent>
-          </Card>
-        )}
-
         {categorizationResult && (
           <Card>
             <CardHeader>
