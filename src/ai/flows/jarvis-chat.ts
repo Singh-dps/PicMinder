@@ -11,32 +11,13 @@
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 import { ScannedItem } from '@/context/app-state-context';
+import { JarvisChatRequestSchema, JarvisChatResponseSchema, JarvisChatRequest, JarvisChatResponse, Message } from './jarvis-chat-types';
 
 import { categorizePhotosAndSuggestActions } from './categorize-photos-and-suggest-actions';
 import { extractEventDetails } from './extract-event-details';
 import { summarizeEventDetails } from './summarize-event-details';
 import { extractInformationFromPhoto } from './extract-information-from-photo';
 import { explainMeme } from './explain-meme';
-
-// Define schemas for messages
-const MediaPartSchema = z.object({
-  url: z.string().describe('The data URI of the media.'),
-});
-
-const TextPartSchema = z.object({
-  text: z.string(),
-});
-
-const ContentPartSchema = z.union([
-  TextPartSchema,
-  z.object({ media: MediaPartSchema }),
-]);
-
-const MessageSchema = z.object({
-  role: z.enum(['user', 'model']),
-  content: z.array(ContentPartSchema),
-});
-export type Message = z.infer<typeof MessageSchema>;
 
 
 // Tool to analyze a photo
@@ -118,20 +99,6 @@ const searchDocumentsTool = ai.defineTool(
         return { query };
     }
 );
-
-
-// Jarvis Chat Flow
-export const JarvisChatRequestSchema = z.object({
-  messages: z.array(MessageSchema),
-});
-export type JarvisChatRequest = z.infer<typeof JarvisChatRequestSchema>;
-
-export const JarvisChatResponseSchema = z.object({
-    response: MessageSchema,
-    scannedItem: z.custom<ScannedItem>().nullable(),
-    history: z.custom<ScannedItem[]>().nullable(),
-});
-export type JarvisChatResponse = z.infer<typeof JarvisChatResponseSchema>;
 
 
 const jarvisChatPrompt = ai.definePrompt({

@@ -9,3 +9,4 @@ import '@/ai/flows/extract-event-details.ts';
 import '@/ai/flows/summarize-event-details.ts';
 import '@/ai/flows/explain-meme.ts';
 import '@/ai/flows/jarvis-chat.ts';
+import '@/ai/flows/jarvis-chat-types.ts';
