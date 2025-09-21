@@ -266,11 +266,7 @@ export function ResultsDisplay({
     } else if (actionLower.includes('bill')) {
       handleSaveBill();
     } else if (actionLower.includes('share')) {
-      if (categorizationResult?.category === 'Memes') {
-        handleShareImage();
-      } else {
         handleWhatsAppClick();
-      }
     } else if (actionLower.includes('details')) {
       handleViewDetailsClick();
     } else if (actionLower.includes('scan qr code') || actionLower.includes('open links')) {
