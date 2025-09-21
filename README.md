@@ -43,7 +43,7 @@ Follow these steps to experience SnippetFlow:
 
 1. **Open the app** and follow the prompts.
 2. Click the **"Capture"** button to open your camera.
-3. **Take a photo** of a recipe, a list, or any text you want to save.
+3. **Take a photo** of a recipe, a list, or any text you want to save
 4. Watch as **PicMinder instantly transforms** the image into a perfectly formatted digital snippet.
 
 ---
