@@ -31,7 +31,8 @@ export default function Home() {
     useState<ExtractEventDetailsOutput | null>(null);
   const [eventSummary, setEventSummary] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [currentItem, setCurrentItem] = useState<ScannedItem | null>(null);
+  
+  const [activeScannedItem, setActiveScannedItem] = useState<ScannedItem | null>(null);
 
   const { toast } = useToast();
 
@@ -45,6 +46,7 @@ export default function Home() {
       setCategorizationResult(null);
       setEventDetailsResult(null);
       setEventSummary(null);
+      setActiveScannedItem(null);
       setIsProcessing(true);
 
       try {
@@ -53,28 +55,21 @@ export default function Home() {
           categorizePhotosAndSuggestActions({ photoDataUri: dataUri }),
         ]);
 
-        setExtractionResult(extraction);
-        setCategorizationResult(categorization);
-
         let eventDetails: ExtractEventDetailsOutput | null = null;
         let summary: string | null = null;
 
         if (categorization.suggestedActions.includes('View Event Details')) {
-          const eventDetailsPromise = extractEventDetails({ photoDataUri: dataUri });
-          
-          setIsProcessing(false);
-
-          eventDetails = await eventDetailsPromise;
-          setEventDetailsResult(eventDetails);
-
+          eventDetails = await extractEventDetails({ photoDataUri: dataUri });
           if (eventDetails) {
             const summaryResult = await summarizeEventDetails({ eventDetails });
             summary = summaryResult.summary;
-            setEventSummary(summary);
           }
-        } else {
-          setIsProcessing(false);
         }
+        
+        setExtractionResult(extraction);
+        setCategorizationResult(categorization);
+        setEventDetailsResult(eventDetails);
+        setEventSummary(summary);
 
         const newItem: ScannedItem = {
           id: new Date().toISOString(),
@@ -85,7 +80,7 @@ export default function Home() {
           eventSummary: summary,
         };
 
-        setCurrentItem(newItem);
+        setActiveScannedItem(newItem);
         addScannedItem(newItem);
 
       } catch (err) {
@@ -97,6 +92,7 @@ export default function Home() {
           description:
             'An unexpected error occurred while analyzing your photo.',
         });
+      } finally {
         setIsProcessing(false);
       }
     };
@@ -112,14 +108,14 @@ export default function Home() {
     setEventSummary(null);
     setIsProcessing(false);
     setError(null);
-    setCurrentItem(null);
+    setActiveScannedItem(null);
   };
 
   const currentView = () => {
-    if (isProcessing) {
+    if (photoDataUri && isProcessing) {
       return 'processing';
     }
-    if (photoDataUri && (extractionResult || categorizationResult || error)) {
+    if (activeScannedItem) {
       return 'results';
     }
     return 'uploader';
@@ -139,15 +135,14 @@ export default function Home() {
             className="flex-1 flex flex-col"
           >
             {currentView() === 'uploader' && (
-              <PhotoUploader onPhotoUpload={handlePhotoUpload} />
+              <PhotoUploader onPhotoUpload={handlePhotoUpload} isProcessing={isProcessing}/>
             )}
             {currentView() === 'processing' && photoDataUri && (
               <ProcessingView photoDataUri={photoDataUri} />
             )}
             {currentView() === 'results' &&
               photoDataUri &&
-              currentItem &&
-              (extractionResult || categorizationResult) && (
+              activeScannedItem && (
                 <>
                   <Button
                     variant="ghost"
@@ -159,16 +154,16 @@ export default function Home() {
                     Upload another photo
                   </Button>
                   <ResultsDisplay
-                    scannedItem={currentItem}
+                    scannedItem={activeScannedItem}
                     photoDataUri={photoDataUri}
-                    extractionResult={extractionResult}
-                    categorizationResult={categorizationResult}
-                    eventDetailsResult={eventDetailsResult}
-                    eventSummary={eventSummary}
+                    extractionResult={activeScannedItem.extractionResult}
+                    categorizationResult={activeScannedItem.categorizationResult}
+                    eventDetailsResult={activeScannedItem.eventDetailsResult}
+                    eventSummary={activeScannedItem.eventSummary}
                   />
                 </>
               )}
-            {error && (
+            {error && !isProcessing && (
               <div className="text-destructive text-center p-4">
                 <p>{error}</p>
                 <Button onClick={handleReset} className="mt-4">
