@@ -45,12 +45,12 @@ Your primary goal is to analyze the photo and determine its most fitting categor
 - If the image is a meme or humorous internet image, categorize it as "Memes".
 - If the image is a general document, letter, or form, categorize it as "documents".
 - If a QR code is present, extract its URL for the qrCodeUrl field, but categorize the image based on its primary content (e.g., a ticket with a QR code is still a "Tickets").
-- If the category is "Ads", identify the website of the product or service being advertised and put it in the websiteUrl field.
+- If the category is "Ads", analyze the text in the image to identify the website of the product or service being advertised and put it in the websiteUrl field.
 
 Based on the determined category, suggest appropriate actions.
 - If the category is "bills", you MUST suggest the following 5 actions: "Save Bill", "Contact Store", "Go to store", "Open links", "Share Via whatsapp".
 - If the category is "Tickets", you MUST suggest the following actions: "Save Ticket", "Add to Calendar", "View Event Details", "Contact Organizer", "Get Directions", "Share on WhatsApp". If a QR code is present, also suggest "Scan QR Code".
-- If the category is "Ads", you MUST suggest "Visit Website". You can also suggest "Share".
+- If the category is "Ads", you MUST suggest "Visit Website".
 - If the category is "Memes", you MUST suggest the following action: "Explain Meme".
 - For all other categories, you can suggest a list of up to 5 appropriate actions (e.g., "Share").
 
