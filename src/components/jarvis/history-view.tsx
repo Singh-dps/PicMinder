@@ -20,7 +20,7 @@ interface HistoryViewProps {
 }
 
 export function HistoryView({ scannedItems }: HistoryViewProps) {
-  const { removeScannedItem, removeTicketItem, removeBillItem } = useAppState();
+  const { removeScannedItem, removeTicketItem, removeBillItem, removeDocumentItem } = useAppState();
 
   if (scannedItems.length === 0) {
     return (
@@ -40,6 +40,9 @@ export function HistoryView({ scannedItems }: HistoryViewProps) {
     }
     if(item.categorizationResult?.category === 'bills') {
       removeBillItem(item.id);
+    }
+    if(item.categorizationResult?.category === 'documents') {
+      removeDocumentItem(item.id);
     }
   };
 

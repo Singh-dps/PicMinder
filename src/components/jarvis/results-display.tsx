@@ -33,6 +33,7 @@ import {
   MessageSquare,
   HelpCircle,
   Globe,
+  FileText,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { ScannedItem, useAppState } from '@/context/app-state-context';
@@ -55,7 +56,7 @@ export function ResultsDisplay({
   eventSummary,
 }: ResultsDisplayProps) {
   const { toast } = useToast();
-  const { addTicketItem, ticketItems, addBillItem, billItems } = useAppState();
+  const { addTicketItem, ticketItems, addBillItem, billItems, addDocumentItem, documentItems } = useAppState();
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
   const [isSummarizing, setIsSummarizing] = useState(false);
   const [currentEventSummary, setCurrentEventSummary] = useState(eventSummary);
@@ -65,6 +66,7 @@ export function ResultsDisplay({
 
   const isTicketSaved = ticketItems.some(item => item.id === scannedItem.id);
   const isBillSaved = billItems.some(item => item.id === scannedItem.id);
+  const isDocumentSaved = documentItems.some(item => item.id === scannedItem.id);
 
   const handleOpenLink = () => {
     let url = categorizationResult?.websiteUrl || categorizationResult?.qrCodeUrl;
@@ -251,6 +253,16 @@ export function ResultsDisplay({
     }
   };
 
+  const handleSaveDocument = () => {
+    if (scannedItem) {
+      addDocumentItem(scannedItem);
+      toast({
+        title: 'Document Saved',
+        description: 'The document has been saved to your documents page.',
+      });
+    }
+  };
+
   const handleExplainMemeClick = async () => {
     setIsMemeExplanationOpen(true);
     if (memeExplanation) return;
@@ -305,6 +317,7 @@ export function ResultsDisplay({
     if (actionLower.includes('direction')) return <MapPin className="mr-2" />;
     if (actionLower.includes('go to store') || actionLower.includes('find nearest store')) return <Store className="mr-2" />;
     if (actionLower.includes('bill')) return <Receipt className="mr-2" />;
+    if (actionLower.includes('document')) return <FileText className="mr-2" />;
     if (actionLower.includes('contact')) return <Phone className="mr-2" />;
     if (actionLower.includes('explain meme')) return <HelpCircle className="mr-2" />;
     if (actionLower.includes('visit website')) return <Globe className="mr-2" />;
@@ -319,6 +332,8 @@ export function ResultsDisplay({
       handleSaveTicket();
     } else if (actionLower.includes('bill')) {
       handleSaveBill();
+    } else if (actionLower.includes('document')) {
+      handleSaveDocument();
     } else if (actionLower.includes('share')) {
         handleWhatsAppClick();
     } else if (actionLower.includes('details')) {
@@ -389,7 +404,11 @@ export function ResultsDisplay({
                   } else if (actionLower.includes('bill')) {
                     isDisabled = isBillSaved;
                     if(isBillSaved) buttonText = 'Bill Saved';
+                  } else if (actionLower.includes('document')) {
+                    isDisabled = isDocumentSaved;
+                    if(isDocumentSaved) buttonText = 'Document Saved';
                   }
+
 
                   return (
                     <Button key={index} onClick={() => handleActionClick(action)} variant="outline" className="justify-start" disabled={isDisabled}>

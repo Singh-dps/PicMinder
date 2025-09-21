@@ -48,7 +48,7 @@ When inferring a website URL from a logo, product, or text, you MUST prioritize 
 - If the image is a ticket or event invitation, categorize it as "Tickets". You MUST suggest the following actions: "Save Ticket", "Add to Calendar", "View Event Details", "Contact Organizer", "Get Directions", "Share on WhatsApp". If a QR code is present, also suggest "Scan QR Code".
 - If the image appears to be an advertisement, categorize it as "Ads". Infer the brand or store name from the ad content. If the brand has physical locations (e.g., McDonald's, a local supermarket), you MUST extract the store/brand name into the 'storeName' field and suggest "Find nearest store". Also, infer the most relevant website, prioritizing the Indian domain, and suggest "Visit Website".
 - If the image is a meme or humorous internet image, categorize it as "Memes". You MUST suggest the following action: "Explain Meme".
-- If the image is a general document, letter, or form, categorize it as "documents".
+- If the image is a general document, letter, or form, categorize it as "documents". You MUST suggest "Save Document".
 - If a QR code is present, extract its URL for the qrCodeUrl field, but categorize the image based on its primary content (e.g., a ticket with a QR code is still categorized as "Tickets").
 
 For all categories, if a website, logo, or brand is identifiable, infer the Indian-relevant website URL and populate the websiteUrl field.
