@@ -37,14 +37,14 @@ const categorizePhotosAndSuggestActionsPrompt = ai.definePrompt({
   name: 'categorizePhotosAndSuggestActionsPrompt',
   input: {schema: CategorizePhotosAndSuggestActionsInputSchema},
   output: {schema: CategorizePhotosAndSuggestActionsOutputSchema},
-  prompt: `You are an expert AI assistant designed to accurately categorize photos. Your primary goal is to analyze the photo and determine its most fitting category from the following list: "bills", "Tickets", "Ads", "Memes", "documents".
+  prompt: `You are an expert AI assistant designed to accurately categorize photos and suggest a comprehensive set of actions. Your primary goal is to analyze the photo, determine its category, and provide all viable actions for that category.
 
 You MUST adhere to the following rules for categorization and action suggestion:
 
 1.  **URL Inference**: When inferring a website URL, you MUST prioritize Indian domains for multinational brands (e.g., "coca-cola.in", "amazon.in"). Populate the \`websiteUrl\` field.
 2.  **QR Codes**: If a QR code is present, extract its URL into the \`qrCodeUrl\` field. The image category should be based on the rest of the content (e.g., a ticket with a QR code is "Tickets"). If a QR code is present, always suggest "Open link".
 
-**Categorization Rules:**
+**Categorization Rules and Actions:**
 
 -   **Bills**: If the image is a bill or invoice, categorize it as "bills".
     -   You MUST extract the store's name into the \`storeName\` field.
@@ -61,7 +61,7 @@ You MUST adhere to the following rules for categorization and action suggestion:
     -   You MUST suggest these actions: "Explain Meme", "Share on WhatsApp".
 
 -   **Documents**: If the image is a general document, letter, or form that does not fit other categories, categorize it as "documents".
-    -   You MUST suggest "Save Document".
+    -   You MUST suggest "Save Document", "Share on WhatsApp", and "Copy Text".
 
 Analyze the photo carefully and follow these instructions precisely.
 

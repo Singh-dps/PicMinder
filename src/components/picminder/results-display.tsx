@@ -287,6 +287,23 @@ export function ResultsDisplay({
     }
   };
 
+  const handleCopyText = () => {
+    if (extractionResult?.extractedText) {
+      navigator.clipboard.writeText(extractionResult.extractedText);
+      toast({
+        title: 'Text Copied',
+        description: 'The extracted text has been copied to your clipboard.',
+      });
+    } else {
+      toast({
+        variant: 'destructive',
+        title: 'No Text Found',
+        description: 'Could not find any text to copy.',
+      });
+    }
+  };
+
+
   const getActionIcon = (action: string) => {
     const actionLower = action.toLowerCase();
     if (actionLower.includes('calendar')) return <CalendarPlus className="mr-2" />;
@@ -301,6 +318,7 @@ export function ResultsDisplay({
     if (actionLower.includes('contact')) return <Phone className="mr-2" />;
     if (actionLower.includes('explain meme')) return <HelpCircle className="mr-2" />;
     if (actionLower.includes('visit website')) return <Globe className="mr-2" />;
+    if (actionLower.includes('copy text')) return <Copy className="mr-2" />;
     return null;
   };
   
@@ -332,6 +350,8 @@ export function ResultsDisplay({
       handleExplainMemeClick();
     } else if (actionLower.includes('visit website')) {
       handleVisitWebsite();
+    } else if (actionLower.includes('copy text')) {
+      handleCopyText();
     } else {
       toast({
         title: 'Action not implemented',
