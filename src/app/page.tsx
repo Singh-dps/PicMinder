@@ -16,7 +16,7 @@ import { extractEventDetails } from '@/ai/flows/extract-event-details';
 import { summarizeEventDetails } from '@/ai/flows/summarize-event-details';
 
 export default function Home() {
-  const { addScannedItem } = useAppState();
+  const { addScannedItem, addBillItem, addTicketItem, addDocumentItem } = useAppState();
   const { toast } = useToast();
   const [photoDataUri, setPhotoDataUri] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -62,8 +62,19 @@ export default function Home() {
           }
         }
         
-        setCurrentItem(scannedItem);
+        // Save to the general history
         addScannedItem(scannedItem);
+
+        // Automatically save to the specific category
+        if (categorization.category === 'bills') {
+          addBillItem(scannedItem);
+        } else if (categorization.category === 'Tickets') {
+          addTicketItem(scannedItem);
+        } else if (categorization.category === 'documents') {
+          addDocumentItem(scannedItem);
+        }
+
+        setCurrentItem(scannedItem);
 
       } catch (err) {
         console.error(err);

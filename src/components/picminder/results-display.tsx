@@ -362,6 +362,12 @@ export function ResultsDisplay({
 
   const hasActions = (categorizationResult && categorizationResult.suggestedActions?.length > 0);
 
+  // Filter out the "Save" actions since they are now automatic
+  const actionsToShow = categorizationResult?.suggestedActions.filter(action => {
+    const actionLower = action.toLowerCase();
+    return !actionLower.includes('bill') && !actionLower.includes('ticket') && !actionLower.includes('document');
+  });
+
   return (
     <div className="space-y-6 pb-8">
       <Card className="overflow-hidden">
@@ -393,27 +399,11 @@ export function ResultsDisplay({
               </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col space-y-2">
-              {categorizationResult.suggestedActions.map((action, index) => {
-                  const actionLower = action.toLowerCase();
-                  let isDisabled = false;
-                  let buttonText = action;
-
-                  if (actionLower.includes('ticket')) {
-                    isDisabled = isTicketSaved;
-                    if(isTicketSaved) buttonText = 'Ticket Saved';
-                  } else if (actionLower.includes('bill')) {
-                    isDisabled = isBillSaved;
-                    if(isBillSaved) buttonText = 'Bill Saved';
-                  } else if (actionLower.includes('document')) {
-                    isDisabled = isDocumentSaved;
-                    if(isDocumentSaved) buttonText = 'Document Saved';
-                  }
-
-
+              {actionsToShow?.map((action, index) => {
                   return (
-                    <Button key={index} onClick={() => handleActionClick(action)} variant="outline" className="justify-start" disabled={isDisabled}>
+                    <Button key={index} onClick={() => handleActionClick(action)} variant="outline" className="justify-start">
                       {getActionIcon(action)}
-                      {buttonText}
+                      {action}
                     </Button>
                   )
               })}
