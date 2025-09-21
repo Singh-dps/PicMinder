@@ -66,9 +66,16 @@ export function ResultsDisplay({
   const isTicketSaved = ticketItems.some(item => item.id === scannedItem.id);
   const isBillSaved = billItems.some(item => item.id === scannedItem.id);
 
-  const handleQrCodeClick = () => {
-    if (categorizationResult?.qrCodeUrl) {
-      window.open(categorizationResult.qrCodeUrl, '_blank');
+  const handleOpenLink = () => {
+    const url = categorizationResult?.websiteUrl || categorizationResult?.qrCodeUrl;
+    if (url) {
+      window.open(url, '_blank');
+    } else {
+      toast({
+        variant: 'destructive',
+        title: 'No Link Found',
+        description: 'Could not find a link in the photo.',
+      });
     }
   };
 
@@ -269,8 +276,10 @@ export function ResultsDisplay({
         handleWhatsAppClick();
     } else if (actionLower.includes('details')) {
       handleViewDetailsClick();
-    } else if (actionLower.includes('scan qr code') || actionLower.includes('open links')) {
-      handleQrCodeClick();
+    } else if (actionLower.includes('scan qr code')) {
+      handleOpenLink();
+    } else if (actionLower.includes('open link')) {
+      handleOpenLink();
     } else if (actionLower.includes('direction') || actionLower.includes('go to store')) {
       handleDirectionsClick();
     } else if (actionLower.includes('contact')) {

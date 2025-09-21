@@ -24,7 +24,7 @@ const CategorizePhotosAndSuggestActionsOutputSchema = z.object({
   category: z.string().describe('The category of the photo (e.g., "bills", "Tickets", "Ads", "Memes", "documents").'),
   suggestedActions: z.array(z.string()).describe('A list of up to 5 suggested actions based on the photo.'),
   qrCodeUrl: z.string().optional().describe('The URL extracted from the QR code, if present.'),
-  websiteUrl: z.string().optional().describe('The website URL extracted from the ad, if present.'),
+  websiteUrl: z.string().optional().describe('The website URL extracted from the ad or a link, if present.'),
 });
 export type CategorizePhotosAndSuggestActionsOutput = z.infer<typeof CategorizePhotosAndSuggestActionsOutputSchema>;
 
@@ -40,6 +40,7 @@ const categorizePhotosAndSuggestActionsPrompt = ai.definePrompt({
 
 Your primary goal is to analyze the photo and determine its most fitting category from the following list: "bills", "Tickets", "Ads", "Memes", "documents".
 
+- If the image contains a URL or a QR code, extract the URL for the websiteUrl or qrCodeUrl field respectively. Also suggest "Open link" as an action.
 - If the image is a bill or invoice, categorize it as "bills".
 - If the image is a ticket or event invitation, categorize it as "Tickets".
 - If the image appears to be an advertisement, categorize it as "Ads".
