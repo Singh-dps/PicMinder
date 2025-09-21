@@ -8,7 +8,7 @@ export function PicMinderHeader() {
     <header className="flex items-center justify-between p-4 border-b border-border/50">
       <Link href="/" className="flex items-center gap-3 text-primary">
         <BrainCircuit size={32} />
-        <h1 className="text-3xl font-bold tracking-tight">PicMinder</h1>
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">PicMinder</h1>
       </Link>
       <div className="flex items-center gap-2">
         <Link href="/documents" passHref>

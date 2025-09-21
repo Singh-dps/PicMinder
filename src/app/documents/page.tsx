@@ -36,9 +36,9 @@ export default function DocumentsPage() {
           transition={{ duration: 0.3 }}
           className="flex-1 flex flex-col"
         >
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold">Saved Documents</h2>
-            <div className="relative w-full max-w-sm">
+          <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
+            <h2 className="text-2xl font-bold self-start">Saved Documents</h2>
+            <div className="relative w-full md:max-w-sm">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <Input
                 type="search"
