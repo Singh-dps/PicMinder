@@ -25,6 +25,7 @@ const CategorizePhotosAndSuggestActionsOutputSchema = z.object({
   suggestedActions: z.array(z.string()).describe('A list of up to 5 suggested actions based on the photo.'),
   qrCodeUrl: z.string().optional().describe('The URL extracted from the QR code, if present.'),
   websiteUrl: z.string().optional().describe('The website URL extracted from the ad or a link, if present.'),
+  storeName: z.string().optional().describe('The name of the store, extracted from a bill.'),
 });
 export type CategorizePhotosAndSuggestActionsOutput = z.infer<typeof CategorizePhotosAndSuggestActionsOutputSchema>;
 
@@ -43,7 +44,7 @@ Your primary goal is to analyze the photo and determine its most fitting categor
 - If the image contains an explicit URL or a QR code, extract the URL for the websiteUrl or qrCodeUrl field respectively and suggest "Open link" as an action.
 - If the image contains a logo, product, or text that implies an advertiser (e.g., "Coca-Cola", "Blitzit"), infer the most probable website URL. For multinational brands, you must prioritize the Indian version of the site (e.g., for "Coca-Cola", infer "coca-cola.in"; for "Amazon", infer "amazon.in"). Populate the websiteUrl field with this URL and suggest "Open link" or "Visit Website" as an action.
 
-- If the image is a bill or invoice, categorize it as "bills".
+- If the image is a bill or invoice, categorize it as "bills". Also extract the store name and populate the storeName field.
 - If the image is a ticket or event invitation, categorize it as "Tickets".
 - If the image appears to be an advertisement, categorize it as "Ads".
 - If the image is a meme or humorous internet image, categorize it as "Memes".

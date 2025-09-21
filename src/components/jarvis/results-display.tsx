@@ -110,10 +110,8 @@ export function ResultsDisplay({
   };
 
   const handleDirectionsClick = () => {
-    let address = eventDetailsResult?.location;
-    if (!address) {
-      address = extractionResult?.address;
-    }
+    let address = eventDetailsResult?.location || extractionResult?.address;
+
     if (address) {
       const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`;
       window.open(mapsUrl, '_blank');
@@ -126,6 +124,43 @@ export function ResultsDisplay({
     }
   };
   
+  const handleGoToStore = () => {
+    const storeName = categorizationResult?.storeName;
+    if (!storeName) {
+      handleDirectionsClick(); // Fallback to address if no store name
+      return;
+    }
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          const query = `${storeName} near me`;
+          const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}&ll=${latitude},${longitude}`;
+          window.open(mapsUrl, '_blank');
+        },
+        (error) => {
+          console.error("Geolocation error:", error);
+          toast({
+            variant: 'destructive',
+            title: 'Location Error',
+            description: 'Could not get your location. Searching for the store without it.',
+          });
+          // Fallback to searching without location
+          const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(storeName)}`;
+          window.open(mapsUrl, '_blank');
+        }
+      );
+    } else {
+      toast({
+        title: 'Location Not Supported',
+        description: "Your browser doesn't support geolocation. Searching for the store without it.",
+      });
+      const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(storeName)}`;
+      window.open(mapsUrl, '_blank');
+    }
+  };
+
   const handleContact = () => {
     const phone = extractionResult?.phoneNumber;
     const email = extractionResult?.email;
@@ -263,7 +298,8 @@ export function ResultsDisplay({
     if (actionLower.includes('share')) return <Share2 className="mr-2" />;
     if (actionLower.includes('details')) return <Eye className="mr-2" />;
     if (actionLower.includes('scan qr code') || actionLower.includes('open link')) return <LinkIcon className="mr-2" />;
-    if (actionLower.includes('direction') || actionLower.includes('go to store')) return <MapPin className="mr-2" />;
+    if (actionLower.includes('direction')) return <MapPin className="mr-2" />;
+    if (actionLower.includes('go to store')) return <Store className="mr-2" />;
     if (actionLower.includes('bill')) return <Receipt className="mr-2" />;
     if (actionLower.includes('contact')) return <Phone className="mr-2" />;
     if (actionLower.includes('explain meme')) return <HelpCircle className="mr-2" />;
@@ -287,8 +323,10 @@ export function ResultsDisplay({
       handleOpenLink();
     } else if (actionLower.includes('open link')) {
       handleOpenLink();
-    } else if (actionLower.includes('direction') || actionLower.includes('go to store')) {
+    } else if (actionLower.includes('direction')) {
       handleDirectionsClick();
+    } else if (actionLower.includes('go to store')) {
+      handleGoToStore();
     } else if (actionLower.includes('contact')) {
       handleContact();
     } else if (actionLower.includes('explain meme')) {
