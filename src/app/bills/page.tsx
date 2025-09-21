@@ -1,8 +1,8 @@
 
 'use client';
 
-import { JarvisHeader } from '@/components/jarvis/jarvis-header';
-import { HistoryView } from '@/components/jarvis/history-view';
+import { PicMinderHeader } from '@/components/picminder/picminder-header';
+import { HistoryView } from '@/components/picminder/history-view';
 import { useAppState } from '@/context/app-state-context';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -11,7 +11,7 @@ export default function BillsPage() {
 
   return (
     <div className="flex flex-col h-screen bg-background text-foreground antialiased w-full max-w-4xl mx-auto">
-      <JarvisHeader />
+      <PicMinderHeader />
       <main className="flex-1 flex flex-col p-4 overflow-y-auto">
         <AnimatePresence mode="wait">
           <motion.div

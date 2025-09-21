@@ -276,7 +276,7 @@ export function ResultsDisplay({
         await navigator.share({
           files: [file],
           title: 'Check out this meme!',
-          text: 'Sent from Jarvis',
+          text: 'Sent from PicMinder',
         });
       } else {
         // Fallback for browsers that don't support Web Share API or file sharing

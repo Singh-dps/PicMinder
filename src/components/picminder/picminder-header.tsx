@@ -3,12 +3,12 @@ import { BrainCircuit, History, Ticket, Receipt, FileText } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
-export function JarvisHeader() {
+export function PicMinderHeader() {
   return (
     <header className="flex items-center justify-between p-4 border-b border-border/50">
       <Link href="/" className="flex items-center gap-3 text-primary">
         <BrainCircuit size={32} />
-        <h1 className="text-3xl font-bold tracking-tight">Jarvis</h1>
+        <h1 className="text-3xl font-bold tracking-tight">PicMinder</h1>
       </Link>
       <div className="flex items-center gap-2">
         <Link href="/documents" passHref>

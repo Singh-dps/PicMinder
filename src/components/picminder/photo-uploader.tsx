@@ -89,4 +89,3 @@ export const PhotoUploader = React.forwardRef<HTMLInputElement, PhotoUploaderPro
   );
 });
 PhotoUploader.displayName = 'PhotoUploader';
-

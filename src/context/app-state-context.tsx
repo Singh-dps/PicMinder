@@ -33,10 +33,10 @@ interface AppState {
 
 const AppStateContext = createContext<AppState | undefined>(undefined);
 
-const LOCAL_STORAGE_KEY_SCANS = 'jarvisScannedItems';
-const LOCAL_STORAGE_KEY_TICKETS = 'jarvisTicketItems';
-const LOCAL_STORAGE_KEY_BILLS = 'jarvisBillItems';
-const LOCAL_STORAGE_KEY_DOCUMENTS = 'jarvisDocumentItems';
+const LOCAL_STORAGE_KEY_SCANS = 'picMinderScannedItems';
+const LOCAL_STORAGE_KEY_TICKETS = 'picMinderTicketItems';
+const LOCAL_STORAGE_KEY_BILLS = 'picMinderBillItems';
+const LOCAL_STORAGE_KEY_DOCUMENTS = 'picMinderDocumentItems';
 
 
 export const AppStateProvider: React.FC<{ children: ReactNode }> = ({

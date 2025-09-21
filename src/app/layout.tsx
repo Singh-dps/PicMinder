@@ -4,7 +4,7 @@ import './globals.css';
 import { AppStateProvider } from '@/context/app-state-context';
 
 export const metadata: Metadata = {
-  title: 'Jarvis',
+  title: 'PicMinder',
   description: 'Your intelligent photo assistant.',
 };
 

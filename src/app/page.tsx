@@ -1,12 +1,12 @@
 
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { JarvisHeader } from '@/components/jarvis/jarvis-header';
-import { PhotoUploader } from '@/components/jarvis/photo-uploader';
-import { ProcessingView } from '@/components/jarvis/processing-view';
-import { ResultsDisplay } from '@/components/jarvis/results-display';
+import { PicMinderHeader } from '@/components/picminder/picminder-header';
+import { PhotoUploader } from '@/components/picminder/photo-uploader';
+import { ProcessingView } from '@/components/picminder/processing-view';
+import { ResultsDisplay } from '@/components/picminder/results-display';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -153,7 +153,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col h-screen bg-background text-foreground antialiased w-full max-w-md mx-auto">
-      <JarvisHeader />
+      <PicMinderHeader />
       <main className="flex-1 flex flex-col items-center p-4 overflow-y-auto">
         <AnimatePresence mode="wait">{renderContent()}</AnimatePresence>
       </main>
