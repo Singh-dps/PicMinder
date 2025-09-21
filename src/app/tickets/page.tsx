@@ -1,6 +1,5 @@
 'use client';
 
-import { PicMinderHeader } from '@/components/picminder/picminder-header';
 import { HistoryView } from '@/components/picminder/history-view';
 import { useAppState, ScannedItem } from '@/context/app-state-context';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -87,45 +86,42 @@ export default function TicketsPage() {
   }, [ticketItems]);
 
   return (
-    <div className="flex flex-col h-screen bg-background text-foreground antialiased w-full max-w-4xl mx-auto">
-      <PicMinderHeader />
-      <main className="flex-1 flex flex-col p-4 overflow-y-auto">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key="tickets-view"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-            className="flex-1 flex flex-col"
-          >
-            <h2 className="text-2xl font-bold mb-4">Saved Tickets</h2>
-            {ticketItems.length > 0 ? (
-               <Tabs defaultValue="Upcoming" className="flex-1 flex flex-col">
-                <TabsList className="grid w-full grid-cols-3">
-                  <TabsTrigger value="Upcoming">Upcoming ({categorizedTickets.Upcoming.length})</TabsTrigger>
-                  <TabsTrigger value="Ongoing">Ongoing ({categorizedTickets.Ongoing.length})</TabsTrigger>
-                  <TabsTrigger value="Past">Past ({categorizedTickets.Past.length})</TabsTrigger>
-                </TabsList>
-                <TabsContent value="Upcoming" className="flex-1 mt-4">
-                  <HistoryView scannedItems={categorizedTickets.Upcoming} />
-                </TabsContent>
-                <TabsContent value="Ongoing" className="flex-1 mt-4">
-                  <HistoryView scannedItems={categorizedTickets.Ongoing} />
-                </TabsContent>
-                <TabsContent value="Past" className="flex-1 mt-4">
-                  <HistoryView scannedItems={categorizedTickets.Past} />
-                </TabsContent>
-              </Tabs>
-            ) : (
-                <div className="flex flex-col items-center justify-center flex-1 text-center text-muted-foreground">
-                    <p className="text-lg">No saved tickets yet.</p>
-                    <p>Upload a photo of a ticket to save it here.</p>
-                </div>
-            )}
-          </motion.div>
-        </AnimatePresence>
-      </main>
-    </div>
+    <main className="flex-1 flex flex-col p-4 md:p-6 overflow-y-auto">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key="tickets-view"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.3 }}
+          className="flex-1 flex flex-col"
+        >
+          <h1 className="text-2xl md:text-3xl font-bold mb-4">Saved Tickets</h1>
+          {ticketItems.length > 0 ? (
+             <Tabs defaultValue="Upcoming" className="flex-1 flex flex-col">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="Upcoming">Upcoming ({categorizedTickets.Upcoming.length})</TabsTrigger>
+                <TabsTrigger value="Ongoing">Ongoing ({categorizedTickets.Ongoing.length})</TabsTrigger>
+                <TabsTrigger value="Past">Past ({categorizedTickets.Past.length})</TabsTrigger>
+              </TabsList>
+              <TabsContent value="Upcoming" className="flex-1 mt-4">
+                <HistoryView scannedItems={categorizedTickets.Upcoming} />
+              </TabsContent>
+              <TabsContent value="Ongoing" className="flex-1 mt-4">
+                <HistoryView scannedItems={categorizedTickets.Ongoing} />
+              </TabsContent>
+              <TabsContent value="Past" className="flex-1 mt-4">
+                <HistoryView scannedItems={categorizedTickets.Past} />
+              </TabsContent>
+            </Tabs>
+          ) : (
+              <div className="flex flex-col items-center justify-center flex-1 text-center text-muted-foreground">
+                  <p className="text-lg">No saved tickets yet.</p>
+                  <p>Upload a photo of a ticket to save it here.</p>
+              </div>
+          )}
+        </motion.div>
+      </AnimatePresence>
+    </main>
   );
 }

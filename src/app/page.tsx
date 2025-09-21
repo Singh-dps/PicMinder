@@ -3,7 +3,6 @@
 
 import { useState, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { PicMinderHeader } from '@/components/picminder/picminder-header';
 import { PhotoUploader } from '@/components/picminder/photo-uploader';
 import { ProcessingView } from '@/components/picminder/processing-view';
 import { ResultsDisplay } from '@/components/picminder/results-display';
@@ -152,11 +151,8 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-background text-foreground antialiased w-full max-w-md mx-auto">
-      <PicMinderHeader />
-      <main className="flex-1 flex flex-col items-center p-4 overflow-y-auto">
-        <AnimatePresence mode="wait">{renderContent()}</AnimatePresence>
-      </main>
-    </div>
+    <main className="flex-1 flex flex-col items-center p-4 md:p-6 overflow-y-auto justify-center max-w-md mx-auto w-full">
+      <AnimatePresence mode="wait">{renderContent()}</AnimatePresence>
+    </main>
   );
 }

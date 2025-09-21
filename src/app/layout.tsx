@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Toaster } from '@/components/ui/toaster';
 import './globals.css';
 import { AppStateProvider } from '@/context/app-state-context';
+import { PicMinderSidebar } from '@/components/picminder/picminder-sidebar';
 
 export const metadata: Metadata = {
   title: 'PicMinder',
@@ -29,7 +30,12 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased h-full bg-background">
         <AppStateProvider>
-          {children}
+          <div className="flex h-full">
+            <PicMinderSidebar />
+            <div className="flex-1 flex flex-col overflow-hidden">
+              {children}
+            </div>
+          </div>
           <Toaster />
         </AppStateProvider>
       </body>
