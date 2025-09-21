@@ -32,6 +32,6 @@ export type JarvisChatRequest = z.infer<typeof JarvisChatRequestSchema>;
 export const JarvisChatResponseSchema = z.object({
     response: MessageSchema,
     scannedItem: z.custom<ScannedItem>().nullable(),
-    history: z.custom<ScannedItem[]>().nullable(),
+    historyCategory: z.string().nullable(),
 });
 export type JarvisChatResponse = z.infer<typeof JarvisChatResponseSchema>;

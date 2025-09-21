@@ -59,7 +59,7 @@ export default function Home() {
         messages: [...messages, userMessage],
       };
 
-      const { response, scannedItem, history } = await jarvisChat(chatRequest);
+      const { response, scannedItem, historyCategory } = await jarvisChat(chatRequest);
 
       setMessages((prev) => [...prev, response]);
 
@@ -67,12 +67,12 @@ export default function Home() {
         setActiveScannedItem(scannedItem);
         addScannedItem(scannedItem);
       }
-      if(history) {
-        if(response.content[0].text?.includes('bills')) {
+      if(historyCategory) {
+        if(historyCategory.includes('bills')) {
             setHistoryItems(billItems);
-        } else if (response.content[0].text?.includes('tickets')) {
+        } else if (historyCategory.includes('tickets')) {
             setHistoryItems(ticketItems);
-        } else if (response.content[0].text?.includes('documents')) {
+        } else if (historyCategory.includes('documents')) {
             setHistoryItems(documentItems);
         }
       }

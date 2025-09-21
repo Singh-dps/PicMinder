@@ -137,7 +137,7 @@ const jarvisChatFlow = ai.defineFlow(
         const toolCalls = llmResponse.toolCalls();
 
         let scannedItem: ScannedItem | null = null;
-        let history: ScannedItem[] | null = null;
+        let historyCategory: string | null = null;
         let responseMessage: Message;
 
         if (toolCalls.length > 0) {
@@ -153,6 +153,7 @@ const jarvisChatFlow = ai.defineFlow(
             } else if (toolCall.tool.name === 'getSavedItems') {
                 // The client will handle fetching from local storage
                 const { category } = toolResponse as { category: string };
+                historyCategory = category;
                  responseMessage = {
                     role: 'model',
                     content: [{ text: `Fetching your saved ${category}. I'll display them below.` }],
@@ -187,7 +188,7 @@ const jarvisChatFlow = ai.defineFlow(
         return {
             response: responseMessage,
             scannedItem: scannedItem,
-            history: history
+            historyCategory: historyCategory
         };
     }
 );
