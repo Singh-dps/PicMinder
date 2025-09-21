@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview Categorizes photos and suggests relevant actions.
