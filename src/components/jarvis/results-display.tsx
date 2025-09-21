@@ -127,7 +127,11 @@ export function ResultsDisplay({
   const handleGoToStore = () => {
     const storeName = categorizationResult?.storeName;
     if (!storeName) {
-      handleDirectionsClick(); // Fallback to address if no store name
+       toast({
+        variant: 'destructive',
+        title: 'No Store Name Found',
+        description: 'The AI could not identify a store in the photo.',
+      });
       return;
     }
 
