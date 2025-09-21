@@ -25,7 +25,7 @@ const CategorizePhotosAndSuggestActionsOutputSchema = z.object({
   suggestedActions: z.array(z.string()).describe('A list of up to 5 suggested actions based on the photo.'),
   qrCodeUrl: z.string().optional().describe('The URL extracted from the QR code, if present.'),
   websiteUrl: z.string().optional().describe('The website URL extracted from the ad or a link, if present.'),
-  storeName: z.string().optional().describe('The name of the store, extracted from a bill.'),
+  storeName: z.string().optional().describe('The name of the store, extracted from a bill or ad.'),
 });
 export type CategorizePhotosAndSuggestActionsOutput = z.infer<typeof CategorizePhotosAndSuggestActionsOutputSchema>;
 
@@ -54,7 +54,7 @@ Your primary goal is to analyze the photo and determine its most fitting categor
 Based on the determined category, suggest appropriate actions.
 - If the category is "bills", you MUST suggest the following 5 actions: "Save Bill", "Contact Store", "Go to store", "Open links", "Share Via whatsapp".
 - If the category is "Tickets", you MUST suggest the following actions: "Save Ticket", "Add to Calendar", "View Event Details", "Contact Organizer", "Get Directions", "Share on WhatsApp". If a QR code is present, also suggest "Scan QR Code".
-- If the category is "Ads", you must analyze the content of the image to identify the most relevant product, brand, or company. Based on this, determine the most likely website URL, prioritizing the Indian domain (.in). For example, if the ad is for a company named "Blitzit," you should infer the website is "blitzit.in" if it exists, otherwise "blitzit.com". Populate the websiteUrl field with this URL and suggest "Visit Website" as an action.
+- If the category is "Ads", you must analyze the content of the image to identify the most relevant product, brand, or company. Based on this, determine the most likely website URL, prioritizing the Indian domain (.in). For example, if the ad is for a company named "Blitzit," you should infer the website is "blitzit.in" if it exists, otherwise "blitzit.com". Populate the websiteUrl field with this URL and suggest "Visit Website" as an action. If the ad is for a physical store, restaurant, or service with physical locations (e.g., McDonald's, a local supermarket), extract the store/brand name into the 'storeName' field and suggest "Find nearest store".
 - If the category is "Memes", you MUST suggest the following action: "Explain Meme".
 - For all other categories, you can suggest a list of up to 5 appropriate actions (e.g., "Share", "Save Image").
 

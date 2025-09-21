@@ -299,7 +299,7 @@ export function ResultsDisplay({
     if (actionLower.includes('details')) return <Eye className="mr-2" />;
     if (actionLower.includes('scan qr code') || actionLower.includes('open link')) return <LinkIcon className="mr-2" />;
     if (actionLower.includes('direction')) return <MapPin className="mr-2" />;
-    if (actionLower.includes('go to store')) return <Store className="mr-2" />;
+    if (actionLower.includes('go to store') || actionLower.includes('find nearest store')) return <Store className="mr-2" />;
     if (actionLower.includes('bill')) return <Receipt className="mr-2" />;
     if (actionLower.includes('contact')) return <Phone className="mr-2" />;
     if (actionLower.includes('explain meme')) return <HelpCircle className="mr-2" />;
@@ -325,7 +325,7 @@ export function ResultsDisplay({
       handleOpenLink();
     } else if (actionLower.includes('direction')) {
       handleDirectionsClick();
-    } else if (actionLower.includes('go to store')) {
+    } else if (actionLower.includes('go to store') || actionLower.includes('find nearest store')) {
       handleGoToStore();
     } else if (actionLower.includes('contact')) {
       handleContact();
