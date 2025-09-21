@@ -10,7 +10,6 @@ import {
   FileText,
   Home,
   ChevronLeft,
-  Camera,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -28,7 +27,6 @@ const navItems = [
   { href: '/documents', label: 'Documents', icon: FileText },
   { href: '/bills', label: 'Bills', icon: Receipt },
   { href: '/tickets', label: 'Tickets', icon: Ticket },
-  { href: '/memories', label: 'Memories', icon: Camera },
   { href: '/history', label: 'All Scans', icon: History },
 ];
 
