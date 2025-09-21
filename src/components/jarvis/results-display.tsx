@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { ExtractInformationFromPhotoOutput } from '@/ai/flows/extract-information-from-photo';
 import type { CategorizePhotosAndSuggestActionsOutput } from '@/ai/flows/categorize-photos-and-suggest-actions';
 import type { ExtractEventDetailsOutput } from '@/ai/flows/extract-event-details';
@@ -40,29 +40,30 @@ import { ScannedItem, useAppState } from '@/context/app-state-context';
 
 interface ResultsDisplayProps {
   scannedItem: ScannedItem;
-  photoDataUri: string;
-  extractionResult: ExtractInformationFromPhotoOutput | null;
-  categorizationResult: CategorizePhotosAndSuggestActionsOutput | null;
-  eventDetailsResult: ExtractEventDetailsOutput | null;
-  eventSummary: string | null;
 }
 
 export function ResultsDisplay({
   scannedItem,
-  photoDataUri,
-  extractionResult,
-  categorizationResult,
-  eventDetailsResult,
-  eventSummary,
 }: ResultsDisplayProps) {
+  const { 
+    photoDataUri,
+    extractionResult,
+    categorizationResult,
+    eventDetailsResult,
+    eventSummary 
+  } = scannedItem;
+
   const { toast } = useToast();
   const { addTicketItem, ticketItems, addBillItem, billItems, addDocumentItem, documentItems } = useAppState();
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
-  const [isSummarizing, setIsSummarizing] = useState(false);
   const [currentEventSummary, setCurrentEventSummary] = useState(eventSummary);
   const [isMemeExplanationOpen, setIsMemeExplanationOpen] = useState(false);
   const [memeExplanation, setMemeExplanation] = useState<string | null>(null);
   const [isExplainingMeme, setIsExplainingMeme] = useState(false);
+
+  useEffect(() => {
+    setCurrentEventSummary(eventSummary);
+  }, [eventSummary]);
 
   const isTicketSaved = ticketItems.some(item => item.id === scannedItem.id);
   const isBillSaved = billItems.some(item => item.id === scannedItem.id);
@@ -216,51 +217,39 @@ export function ResultsDisplay({
     }
   };
 
-  const handleViewDetailsClick = async () => {
-    if (!eventDetailsResult) return;
-    setIsDetailsDialogOpen(true);
-    if (currentEventSummary) return; 
-
-    setIsSummarizing(true);
-    try {
-      const result = await summarizeEventDetails({ eventDetails: eventDetailsResult });
-      setCurrentEventSummary(result.summary);
-    } catch (error) {
-      console.error("Error summarizing event details:", error);
-      setCurrentEventSummary("Could not load event summary.");
-    } finally {
-      setIsSummarizing(false);
+  const handleViewDetailsClick = () => {
+    if (eventDetailsResult) {
+      setIsDetailsDialogOpen(true);
+    } else {
+      toast({
+        title: 'Details Not Ready',
+        description: 'Event details are still being extracted. Please wait a moment.',
+      });
     }
   };
   
   const handleSaveTicket = () => {
-    if (scannedItem) {
-      addTicketItem(scannedItem);
-      toast({
-        title: 'Ticket Saved',
-        description: 'The ticket has been saved to your tickets page.',
-      });
-    }
+    addTicketItem(scannedItem);
+    toast({
+      title: 'Ticket Saved',
+      description: 'The ticket has been saved to your tickets page.',
+    });
   };
 
   const handleSaveBill = () => {
-    if (scannedItem) {
-      addBillItem(scannedItem);
-      toast({
-        title: 'Bill Saved',
-        description: 'The bill has been saved to your bills page.',
-      });
-    }
+    addBillItem(scannedItem);
+    toast({
+      title: 'Bill Saved',
+      description: 'The bill has been saved to your bills page.',
+    });
   };
 
   const handleSaveDocument = () => {
-    if (scannedItem) {
-      addDocumentItem(scannedItem);
-      toast({
-        title: 'Document Saved',
-        description: 'The document has been saved to your documents page.',
-      });
-    }
+    addDocumentItem(scannedItem);
+    toast({
+      title: 'Document Saved',
+      description: 'The document has been saved to your documents page.',
+    });
   };
 
   const handleExplainMemeClick = async () => {
@@ -428,7 +417,7 @@ export function ResultsDisplay({
           <DialogHeader>
             <DialogTitle>Event Details</DialogTitle>
             <DialogDescription asChild>
-              {isSummarizing ? (
+              {!currentEventSummary ? (
                 <div className="flex items-center gap-2 mt-4">
                    <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
                   <span>Generating summary...</span>

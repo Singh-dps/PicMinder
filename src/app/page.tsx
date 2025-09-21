@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -23,13 +24,6 @@ export default function Home() {
 
   const [photoDataUri, setPhotoDataUri] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [extractionResult, setExtractionResult] =
-    useState<ExtractInformationFromPhotoOutput | null>(null);
-  const [categorizationResult, setCategorizationResult] =
-    useState<CategorizePhotosAndSuggestActionsOutput | null>(null);
-  const [eventDetailsResult, setEventDetailsResult] =
-    useState<ExtractEventDetailsOutput | null>(null);
-  const [eventSummary, setEventSummary] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   
   const [activeScannedItem, setActiveScannedItem] = useState<ScannedItem | null>(null);
@@ -42,46 +36,41 @@ export default function Home() {
       const dataUri = e.target?.result as string;
       setPhotoDataUri(dataUri);
       setError(null);
-      setExtractionResult(null);
-      setCategorizationResult(null);
-      setEventDetailsResult(null);
-      setEventSummary(null);
       setActiveScannedItem(null);
       setIsProcessing(true);
 
       try {
+        // Run initial analysis in parallel
         const [extraction, categorization] = await Promise.all([
           extractInformationFromPhoto({ photoDataUri: dataUri }),
           categorizePhotosAndSuggestActions({ photoDataUri: dataUri }),
         ]);
-
-        let eventDetails: ExtractEventDetailsOutput | null = null;
-        let summary: string | null = null;
-
-        if (categorization.suggestedActions.includes('View Event Details')) {
-          eventDetails = await extractEventDetails({ photoDataUri: dataUri });
-          if (eventDetails) {
-            const summaryResult = await summarizeEventDetails({ eventDetails });
-            summary = summaryResult.summary;
-          }
-        }
-        
-        setExtractionResult(extraction);
-        setCategorizationResult(categorization);
-        setEventDetailsResult(eventDetails);
-        setEventSummary(summary);
 
         const newItem: ScannedItem = {
           id: new Date().toISOString(),
           photoDataUri: dataUri,
           extractionResult: extraction,
           categorizationResult: categorization,
-          eventDetailsResult: eventDetails,
-          eventSummary: summary,
+          eventDetailsResult: null,
+          eventSummary: null,
         };
 
         setActiveScannedItem(newItem);
         addScannedItem(newItem);
+        setIsProcessing(false); // Show initial results now
+
+        // If it's a ticket, run event extraction and summarization in the background
+        if (categorization.suggestedActions.includes('View Event Details')) {
+          const eventDetails = await extractEventDetails({ photoDataUri: dataUri });
+          
+          if (eventDetails) {
+            setActiveScannedItem(prev => prev ? { ...prev, eventDetailsResult: eventDetails } : null);
+            
+            // Now summarize
+            const summaryResult = await summarizeEventDetails({ eventDetails });
+            setActiveScannedItem(prev => prev ? { ...prev, eventSummary: summaryResult.summary } : null);
+          }
+        }
 
       } catch (err) {
         console.error(err);
@@ -92,7 +81,6 @@ export default function Home() {
           description:
             'An unexpected error occurred while analyzing your photo.',
         });
-      } finally {
         setIsProcessing(false);
       }
     };
@@ -102,17 +90,13 @@ export default function Home() {
 
   const handleReset = () => {
     setPhotoDataUri(null);
-    setExtractionResult(null);
-    setCategorizationResult(null);
-    setEventDetailsResult(null);
-    setEventSummary(null);
     setIsProcessing(false);
     setError(null);
     setActiveScannedItem(null);
   };
 
   const currentView = () => {
-    if (photoDataUri && isProcessing) {
+    if (isProcessing) {
       return 'processing';
     }
     if (activeScannedItem) {
@@ -141,7 +125,6 @@ export default function Home() {
               <ProcessingView photoDataUri={photoDataUri} />
             )}
             {currentView() === 'results' &&
-              photoDataUri &&
               activeScannedItem && (
                 <>
                   <Button
@@ -155,11 +138,6 @@ export default function Home() {
                   </Button>
                   <ResultsDisplay
                     scannedItem={activeScannedItem}
-                    photoDataUri={photoDataUri}
-                    extractionResult={activeScannedItem.extractionResult}
-                    categorizationResult={activeScannedItem.categorizationResult}
-                    eventDetailsResult={activeScannedItem.eventDetailsResult}
-                    eventSummary={activeScannedItem.eventSummary}
                   />
                 </>
               )}
