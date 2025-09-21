@@ -184,7 +184,18 @@ export function ResultsDisplay({
   };
 
   const handleWhatsAppClick = () => {
-    if (eventDetailsResult) {
+    const isAd = categorizationResult?.category === 'Ads';
+    const websiteUrl = categorizationResult?.websiteUrl;
+
+    if (isAd && websiteUrl) {
+      let url = websiteUrl;
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        url = `https://${url}`;
+      }
+      const textToShare = `Check out this website: ${url}`;
+      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(textToShare)}`;
+      window.open(whatsappUrl, '_blank');
+    } else if (eventDetailsResult) {
       const { title, date, startTime, location } = eventDetailsResult;
       let message = `Check out this event: ${title}`;
       if (date) {
