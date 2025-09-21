@@ -79,9 +79,9 @@ export default function TicketsPage() {
     });
     
     setCategorizedTickets({
-      Upcoming: upcoming,
-      Ongoing: ongoing,
-      Past: past,
+      Upcoming: upcoming.sort((a, b) => a.createdAt - b.createdAt),
+      Ongoing: ongoing.sort((a, b) => a.createdAt - b.createdAt),
+      Past: past.sort((a, b) => b.createdAt - a.createdAt),
     });
   }, [ticketItems]);
 

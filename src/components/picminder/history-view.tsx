@@ -31,7 +31,7 @@ interface HistoryViewProps {
 export function HistoryView({ scannedItems }: HistoryViewProps) {
   const { removeScannedItem, removeTicketItem, removeBillItem, removeDocumentItem } = useAppState();
   const isMobile = useIsMobile();
-  const [isSheetOpen, setSheetOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<ScannedItem | null>(null);
 
   if (scannedItems.length === 0) {
     return (
@@ -57,51 +57,57 @@ export function HistoryView({ scannedItems }: HistoryViewProps) {
     }
   };
 
-  const formatScanTime = (isoString: string) => {
-    const date = new Date(isoString);
-    return date.toLocaleString();
-  };
-
   const renderContent = (item: ScannedItem) => (
     <div className="max-h-[80vh] overflow-y-auto mt-4 pr-2">
       <ResultsDisplay scannedItem={item} />
     </div>
   );
+  
+  const handleOpen = (item: ScannedItem) => {
+    setSelectedItem(item);
+  };
+
+  const handleClose = () => {
+    setSelectedItem(null);
+  };
+
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-      {scannedItems.map((item) => (
-         isMobile ? (
-            <Sheet key={item.id} open={isSheetOpen} onOpenChange={setSheetOpen}>
-              <SheetTrigger asChild>
-                <Card className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow relative group flex flex-col">
-                  {renderCardContent(item, handleDelete)}
-                </Card>
-              </SheetTrigger>
+    <>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {scannedItems.map((item) => (
+          <Card 
+            key={item.id}
+            className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow relative group flex flex-col"
+            onClick={() => handleOpen(item)}
+          >
+            {renderCardContent(item, handleDelete)}
+          </Card>
+        ))}
+      </div>
+
+      {selectedItem && (
+        isMobile ? (
+            <Sheet open={!!selectedItem} onOpenChange={(isOpen) => !isOpen && handleClose()}>
               <SheetContent side="bottom" className="h-[90vh]">
                 <SheetHeader>
                   <SheetTitle>Scan Results</SheetTitle>
                 </SheetHeader>
-                {renderContent(item)}
+                {renderContent(selectedItem)}
               </SheetContent>
             </Sheet>
           ) : (
-            <Dialog key={item.id}>
-              <DialogTrigger asChild>
-                <Card className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow relative group flex flex-col">
-                  {renderCardContent(item, handleDelete)}
-                </Card>
-              </DialogTrigger>
+            <Dialog open={!!selectedItem} onOpenChange={(isOpen) => !isOpen && handleClose()}>
               <DialogContent className="max-w-md">
                 <DialogHeader>
                   <DialogTitle>Scan Results</DialogTitle>
                 </DialogHeader>
-                {renderContent(item)}
+                {renderContent(selectedItem)}
               </DialogContent>
             </Dialog>
           )
-      ))}
-    </div>
+      )}
+    </>
   );
 }
 
@@ -125,7 +131,7 @@ const renderCardContent = (item: ScannedItem, handleDelete: (e: React.MouseEvent
       />
     </div>
     <CardFooter className="p-2 justify-center">
-        <p className="text-xs text-muted-foreground">{new Date(item.id).toLocaleString()}</p>
+        <p className="text-xs text-muted-foreground">{new Date(item.createdAt).toLocaleString()}</p>
     </CardFooter>
   </>
 );

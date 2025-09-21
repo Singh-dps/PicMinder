@@ -20,7 +20,7 @@ export default function Home() {
   const { toast } = useToast();
   const [photoDataUri, setPhotoDataUri] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [currentItem, setCurrentItem] = useState<ScannedItem | null>(null);
+  const [currentItem, setCurrentItem] = useState<Omit<ScannedItem, 'id' | 'createdAt'> | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handlePhotoUpload = (file: File) => {
@@ -37,8 +37,7 @@ export default function Home() {
           categorizePhotosAndSuggestActions({ photoDataUri: dataUri }),
         ]);
 
-        const scannedItem: ScannedItem = {
-          id: new Date().toISOString(),
+        const scannedItem: Omit<ScannedItem, 'id' | 'createdAt'> = {
           photoDataUri: dataUri,
           extractionResult: extraction,
           categorizationResult: categorization,
@@ -111,7 +110,7 @@ export default function Home() {
             Scan Another Photo
           </Button>
           <ResultsDisplay
-            scannedItem={currentItem}
+            scannedItem={{...currentItem, id: 'temp-id', createdAt: Date.now() }}
           />
         </motion.div>
       );

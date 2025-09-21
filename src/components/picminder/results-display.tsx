@@ -63,9 +63,9 @@ export function ResultsDisplay({
     setCurrentEventSummary(eventSummary);
   }, [eventSummary]);
 
-  const isTicketSaved = ticketItems.some(item => item.id === scannedItem.id);
-  const isBillSaved = billItems.some(item => item.id === scannedItem.id);
-  const isDocumentSaved = documentItems.some(item => item.id === scannedItem.id);
+  const isTicketSaved = ticketItems.some(item => item.photoDataUri === scannedItem.photoDataUri);
+  const isBillSaved = billItems.some(item => item.photoDataUri === scannedItem.photoDataUri);
+  const isDocumentSaved = documentItems.some(item => item.photoDataUri === scannedItem.photoDataUri);
 
   const handleOpenLink = () => {
     let url = categorizationResult?.websiteUrl || categorizationResult?.qrCodeUrl;
@@ -227,7 +227,8 @@ export function ResultsDisplay({
   };
   
   const handleSaveTicket = () => {
-    addTicketItem(scannedItem);
+    const { id, createdAt, ...item } = scannedItem;
+    addTicketItem(item);
     toast({
       title: 'Ticket Saved',
       description: 'The ticket has been saved to your tickets page.',
@@ -235,7 +236,8 @@ export function ResultsDisplay({
   };
 
   const handleSaveBill = () => {
-    addBillItem(scannedItem);
+    const { id, createdAt, ...item } = scannedItem;
+    addBillItem(item);
     toast({
       title: 'Bill Saved',
       description: 'The bill has been saved to your bills page.',
@@ -243,7 +245,8 @@ export function ResultsDisplay({
   };
 
   const handleSaveDocument = () => {
-    addDocumentItem(scannedItem);
+    const { id, createdAt, ...item } = scannedItem;
+    addDocumentItem(item);
     toast({
       title: 'Document Saved',
       description: 'The document has been saved to your documents page.',
