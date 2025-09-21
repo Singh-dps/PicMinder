@@ -36,12 +36,12 @@ const categorizePhotosAndSuggestActionsPrompt = ai.definePrompt({
   name: 'categorizePhotosAndSuggestActionsPrompt',
   input: {schema: CategorizePhotosAndSuggestActionsInputSchema},
   output: {schema: CategorizePhotosAndSuggestActionsOutputSchema},
-  prompt: `You are an expert AI assistant designed to accurately categorize photos.
+  prompt: `You are an expert AI assistant designed to accurately categorize photos with a focus on providing Indian-relevant information.
 
 Your primary goal is to analyze the photo and determine its most fitting category from the following list: "bills", "Tickets", "Ads", "Memes", "documents".
 
 - If the image contains an explicit URL or a QR code, extract the URL for the websiteUrl or qrCodeUrl field respectively and suggest "Open link" as an action.
-- If the image contains a logo, product, or text that implies an advertiser (e.g., "Coca-Cola", "Blitzit"), infer the most probable website URL (e.g., "coca-cola.com", "blitzit.com"), populate the websiteUrl field, and suggest "Open link" or "Visit Website" as an action.
+- If the image contains a logo, product, or text that implies an advertiser (e.g., "Coca-Cola", "Blitzit"), infer the most probable website URL. For multinational brands, you must prioritize the Indian version of the site (e.g., for "Coca-Cola", infer "coca-cola.in"; for "Amazon", infer "amazon.in"). Populate the websiteUrl field with this URL and suggest "Open link" or "Visit Website" as an action.
 
 - If the image is a bill or invoice, categorize it as "bills".
 - If the image is a ticket or event invitation, categorize it as "Tickets".
@@ -53,7 +53,7 @@ Your primary goal is to analyze the photo and determine its most fitting categor
 Based on the determined category, suggest appropriate actions.
 - If the category is "bills", you MUST suggest the following 5 actions: "Save Bill", "Contact Store", "Go to store", "Open links", "Share Via whatsapp".
 - If the category is "Tickets", you MUST suggest the following actions: "Save Ticket", "Add to Calendar", "View Event Details", "Contact Organizer", "Get Directions", "Share on WhatsApp". If a QR code is present, also suggest "Scan QR Code".
-- If the category is "Ads", you must analyze the content of the image to identify the most relevant product, brand, or company. Based on this, determine the most likely website URL. For example, if the ad is for a company named "Blitzit," you should infer the website is "blitzit.com". Populate the websiteUrl field with this URL and suggest "Visit Website" as an action.
+- If the category is "Ads", you must analyze the content of the image to identify the most relevant product, brand, or company. Based on this, determine the most likely website URL, prioritizing the Indian domain (.in). For example, if the ad is for a company named "Blitzit," you should infer the website is "blitzit.in" if it exists, otherwise "blitzit.com". Populate the websiteUrl field with this URL and suggest "Visit Website" as an action.
 - If the category is "Memes", you MUST suggest the following action: "Explain Meme".
 - For all other categories, you can suggest a list of up to 5 appropriate actions (e.g., "Share", "Save Image").
 
@@ -74,4 +74,3 @@ const categorizePhotosAndSuggestActionsFlow = ai.defineFlow(
     return output!;
   }
 );
-
