@@ -28,6 +28,7 @@ interface AppState {
   documentItems: ScannedItem[];
   addDocumentItem: (item: ScannedItem) => void;
   removeDocumentItem: (id: string) => void;
+  isLoaded: boolean;
 }
 
 const AppStateContext = createContext<AppState | undefined>(undefined);
@@ -151,7 +152,7 @@ export const AppStateProvider: React.FC<{ children: ReactNode }> = ({
   
 
   return (
-    <AppStateContext.Provider value={{ scannedItems, addScannedItem, removeScannedItem, ticketItems, addTicketItem, removeTicketItem, billItems, addBillItem, removeBillItem, documentItems, addDocumentItem, removeDocumentItem }}>
+    <AppStateContext.Provider value={{ isLoaded, scannedItems, addScannedItem, removeScannedItem, ticketItems, addTicketItem, removeTicketItem, billItems, addBillItem, removeBillItem, documentItems, addDocumentItem, removeDocumentItem }}>
       {children}
     </AppStateContext.Provider>
   );
