@@ -1,38 +1,84 @@
 
 'use client';
 
+import { useState, useMemo } from 'react';
 import { JarvisHeader } from '@/components/jarvis/jarvis-header';
 import { HistoryView } from '@/components/jarvis/history-view';
 import { useAppState } from '@/context/app-state-context';
 import { AnimatePresence, motion } from 'framer-motion';
+import { Input } from '@/components/ui/input';
+import { Search } from 'lucide-react';
 
 export default function DocumentsPage() {
   const { documentItems } = useAppState();
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredDocuments = useMemo(() => {
+    if (!searchQuery) {
+      return documentItems;
+    }
+    return documentItems.filter((item) =>
+      item.extractionResult?.extractedText
+        ?.toLowerCase()
+        .includes(searchQuery.toLowerCase())
+    );
+  }, [documentItems, searchQuery]);
 
   return (
     <div className="flex flex-col h-screen bg-background text-foreground antialiased w-full max-w-4xl mx-auto">
       <JarvisHeader />
       <main className="flex-1 flex flex-col p-4 overflow-y-auto">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key="documents-view"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-            className="flex-1 flex flex-col"
-          >
-            <h2 className="text-2xl font-bold mb-4">Saved Documents</h2>
-            {documentItems.length > 0 ? (
-                <HistoryView scannedItems={documentItems} />
-            ) : (
+        <motion.div
+          key="documents-view"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.3 }}
+          className="flex-1 flex flex-col"
+        >
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-bold">Saved Documents</h2>
+            <div className="relative w-full max-w-sm">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Search documents..."
+                className="pl-10"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <AnimatePresence mode="wait">
+            <motion.div
+                key={searchQuery}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="flex-1 flex flex-col"
+            >
+              {filteredDocuments.length > 0 ? (
+                <HistoryView scannedItems={filteredDocuments} />
+              ) : (
                 <div className="flex flex-col items-center justify-center flex-1 text-center text-muted-foreground">
-                    <p className="text-lg">No saved documents yet.</p>
-                    <p>Upload a photo of a document to save it here.</p>
+                  {documentItems.length > 0 ? (
+                     <>
+                        <p className="text-lg">No documents found.</p>
+                        <p>Try a different search term.</p>
+                    </>
+                  ) : (
+                    <>
+                        <p className="text-lg">No saved documents yet.</p>
+                        <p>Upload a photo of a document to save it here.</p>
+                    </>
+                  )}
                 </div>
-            )}
-          </motion.div>
-        </AnimatePresence>
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </motion.div>
       </main>
     </div>
   );
