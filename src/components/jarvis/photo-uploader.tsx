@@ -1,21 +1,22 @@
 
 'use client';
 
-import { useRef, ChangeEvent }
+import React, { useRef, ChangeEvent }
 from 'react';
-import { UploadCloud, Paperclip } from 'lucide-react';
+import { UploadCloud } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { Button } from '@/components/ui/button';
 
 interface PhotoUploaderProps {
   onPhotoUpload: (file: File) => void;
   isProcessing: boolean;
-  asButton?: boolean;
 }
 
-export function PhotoUploader({ onPhotoUpload, isProcessing, asButton = false }: PhotoUploaderProps) {
+export const PhotoUploader = React.forwardRef<HTMLInputElement, PhotoUploaderProps>(({ onPhotoUpload, isProcessing }, ref) => {
     const { toast } = useToast();
-    const inputRef = useRef<HTMLInputElement>(null);
+    const internalRef = useRef<HTMLInputElement>(null);
+
+    // Allow parent component to pass a ref, but also use an internal one
+    React.useImperativeHandle(ref, () => internalRef.current as HTMLInputElement);
 
   const handleFileSelect = (file: File | null | undefined) => {
     if (isProcessing) return;
@@ -54,27 +55,16 @@ export function PhotoUploader({ onPhotoUpload, isProcessing, asButton = false }:
   return (
     <>
       <input
-        ref={inputRef}
+        ref={internalRef}
         type="file"
         className="hidden"
         accept="image/*"
         onChange={handleFileChange}
         disabled={isProcessing}
       />
-      {asButton ? (
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={() => inputRef.current?.click()}
-          disabled={isProcessing}
-          aria-label="Upload photo"
-        >
-          <Paperclip />
-        </Button>
-      ) : (
         <div className="flex flex-col items-center justify-center flex-1 w-full gap-6">
           <div
-            onClick={() => inputRef.current?.click()}
+            onClick={() => internalRef.current?.click()}
             onDragEnter={handleDragEnter}
             onDragOver={handleDragEnter}
             onDrop={handleDrop}
@@ -95,7 +85,8 @@ export function PhotoUploader({ onPhotoUpload, isProcessing, asButton = false }:
             privacy.
           </p>
         </div>
-      )}
     </>
   );
-}
+});
+PhotoUploader.displayName = 'PhotoUploader';
+

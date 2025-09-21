@@ -5,7 +5,6 @@ import { useState, useEffect } from 'react';
 import type { ExtractInformationFromPhotoOutput } from '@/ai/flows/extract-information-from-photo';
 import type { CategorizePhotosAndSuggestActionsOutput } from '@/ai/flows/categorize-photos-and-suggest-actions';
 import type { ExtractEventDetailsOutput } from '@/ai/flows/extract-event-details';
-import { summarizeEventDetails } from '@/ai/flows/summarize-event-details';
 import { explainMeme } from '@/ai/flows/explain-meme';
 import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -30,7 +29,6 @@ import {
   Receipt,
   Phone,
   Store,
-  MessageSquare,
   HelpCircle,
   Globe,
   FileText,
@@ -408,6 +406,27 @@ export function ResultsDisplay({
               })}
             </CardContent>
           </Card>
+        )}
+
+        {extractionResult?.extractedText && (
+            <Card>
+                <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                    <span className="flex items-center gap-2">
+                    <FileText className="text-primary" />
+                    <span>Extracted Text</span>
+                    </span>
+                    <Button variant="ghost" size="icon" onClick={handleCopyText}>
+                    <Copy className="h-4 w-4" />
+                    </Button>
+                </CardTitle>
+                </CardHeader>
+                <CardContent>
+                <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                    {extractionResult.extractedText}
+                </p>
+                </CardContent>
+            </Card>
         )}
         
       </div>
