@@ -41,22 +41,17 @@ const categorizePhotosAndSuggestActionsPrompt = ai.definePrompt({
 
 Your primary goal is to analyze the photo and determine its most fitting category from the following list: "bills", "Tickets", "Ads", "Memes", "documents".
 
+When inferring a website URL from a logo, product, or text, you MUST prioritize the Indian version of the site for all multinational brands (e.g., for "Coca-Cola", infer "coca-cola.in"; for "Amazon", infer "amazon.in"; for "McDonald's", infer "mcdonaldsindia.com"). Populate the websiteUrl field with this URL.
+
 - If the image contains an explicit URL or a QR code, extract the URL for the websiteUrl or qrCodeUrl field respectively and suggest "Open link" as an action.
-- If the image contains a logo, product, or text that implies an advertiser (e.g., "Coca-Cola", "Blitzit"), infer the most probable website URL. For multinational brands, you must prioritize the Indian version of the site (e.g., for "Coca-Cola", infer "coca-cola.in"; for "Amazon", infer "amazon.in"). Populate the websiteUrl field with this URL and suggest "Open link" or "Visit Website" as an action.
-
-- If the image is a bill or invoice, categorize it as "bills". Also extract the store name and populate the storeName field.
-- If the image is a ticket or event invitation, categorize it as "Tickets".
-- If the image appears to be an advertisement, categorize it as "Ads".
-- If the image is a meme or humorous internet image, categorize it as "Memes".
+- If the image is a bill or invoice, categorize it as "bills". Also extract the store name and populate the storeName field. You MUST suggest the following 5 actions: "Save Bill", "Contact Store", "Go to store", "Open links", "Share Via whatsapp".
+- If the image is a ticket or event invitation, categorize it as "Tickets". You MUST suggest the following actions: "Save Ticket", "Add to Calendar", "View Event Details", "Contact Organizer", "Get Directions", "Share on WhatsApp". If a QR code is present, also suggest "Scan QR Code".
+- If the image appears to be an advertisement, categorize it as "Ads". Infer the brand or store name from the ad content. If the brand has physical locations (e.g., McDonald's, a local supermarket), you MUST extract the store/brand name into the 'storeName' field and suggest "Find nearest store". Also, infer the most relevant website, prioritizing the Indian domain, and suggest "Visit Website".
+- If the image is a meme or humorous internet image, categorize it as "Memes". You MUST suggest the following action: "Explain Meme".
 - If the image is a general document, letter, or form, categorize it as "documents".
-- If a QR code is present, extract its URL for the qrCodeUrl field, but categorize the image based on its primary content (e.g., a ticket with a QR code is still a "Tickets").
+- If a QR code is present, extract its URL for the qrCodeUrl field, but categorize the image based on its primary content (e.g., a ticket with a QR code is still categorized as "Tickets").
 
-Based on the determined category, suggest appropriate actions.
-- If the category is "bills", you MUST suggest the following 5 actions: "Save Bill", "Contact Store", "Go to store", "Open links", "Share Via whatsapp".
-- If the category is "Tickets", you MUST suggest the following actions: "Save Ticket", "Add to Calendar", "View Event Details", "Contact Organizer", "Get Directions", "Share on WhatsApp". If a QR code is present, also suggest "Scan QR Code".
-- If the category is "Ads", you must analyze the content of the image to identify the most relevant product, brand, or company. Based on this, determine the most likely website URL, prioritizing the Indian domain (.in). For example, if the ad is for a company named "Blitzit," you should infer the website is "blitzit.in" if it exists, otherwise "blitzit.com". Populate the websiteUrl field with this URL and suggest "Visit Website" as an action. If the ad is for a physical store, restaurant, or service with physical locations (e.g., McDonald's, a local supermarket), even if not explicitly mentioned, you MUST infer and extract the store/brand name into the 'storeName' field and suggest "Find nearest store".
-- If the category is "Memes", you MUST suggest the following action: "Explain Meme".
-- For all other categories, you can suggest a list of up to 5 appropriate actions (e.g., "Share", "Save Image").
+For all categories, if a website, logo, or brand is identifiable, infer the Indian-relevant website URL and populate the websiteUrl field.
 
 Analyze the photo carefully before making a decision.
 
