@@ -205,16 +205,6 @@ export function ResultsDisplay({
     }
   };
 
-  const handleCopyText = () => {
-    if (extractionResult?.extractedText) {
-      navigator.clipboard.writeText(extractionResult.extractedText);
-      toast({
-        title: "Copied to clipboard",
-        description: "The extracted text has been copied.",
-      });
-    }
-  };
-
   const handleViewDetailsClick = () => {
     if (eventDetailsResult) {
       setIsDetailsDialogOpen(true);
@@ -409,27 +399,6 @@ export function ResultsDisplay({
               })}
             </CardContent>
           </Card>
-        )}
-
-        {extractionResult?.extractedText && (
-            <Card>
-                <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                    <span className="flex items-center gap-2">
-                    <FileText className="text-primary" />
-                    <span>Extracted Text</span>
-                    </span>
-                    <Button variant="ghost" size="icon" onClick={handleCopyText}>
-                    <Copy className="h-4 w-4" />
-                    </Button>
-                </CardTitle>
-                </CardHeader>
-                <CardContent>
-                <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-                    {extractionResult.extractedText}
-                </p>
-                </CardContent>
-            </Card>
         )}
         
       </div>
