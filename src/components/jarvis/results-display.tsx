@@ -44,7 +44,6 @@ interface ResultsDisplayProps {
   categorizationResult: CategorizePhotosAndSuggestActionsOutput | null;
   eventDetailsResult: ExtractEventDetailsOutput | null;
   eventSummary: string | null;
-  hideExtractedText?: boolean;
 }
 
 export function ResultsDisplay({
@@ -54,7 +53,6 @@ export function ResultsDisplay({
   categorizationResult,
   eventDetailsResult,
   eventSummary,
-  hideExtractedText = false,
 }: ResultsDisplayProps) {
   const { toast } = useToast();
   const { addTicketItem, ticketItems, addBillItem, billItems } = useAppState();
