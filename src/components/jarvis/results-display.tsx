@@ -67,8 +67,11 @@ export function ResultsDisplay({
   const isBillSaved = billItems.some(item => item.id === scannedItem.id);
 
   const handleOpenLink = () => {
-    const url = categorizationResult?.websiteUrl || categorizationResult?.qrCodeUrl;
+    let url = categorizationResult?.websiteUrl || categorizationResult?.qrCodeUrl;
     if (url) {
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        url = `https://${url}`;
+      }
       window.open(url, '_blank');
     } else {
       toast({
@@ -80,8 +83,12 @@ export function ResultsDisplay({
   };
 
   const handleVisitWebsite = () => {
-    if (categorizationResult?.websiteUrl) {
-      window.open(categorizationResult.websiteUrl, '_blank');
+    let url = categorizationResult?.websiteUrl;
+    if (url) {
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        url = `https://${url}`;
+      }
+      window.open(url, '_blank');
     } else {
        toast({
         variant: 'destructive',
