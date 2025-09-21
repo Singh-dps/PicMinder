@@ -216,33 +216,6 @@ export function ResultsDisplay({
     }
   };
   
-  const handleSaveTicket = () => {
-    const { id, createdAt, ...item } = scannedItem;
-    addTicketItem(item);
-    toast({
-      title: 'Ticket Saved',
-      description: 'The ticket has been saved to your tickets page.',
-    });
-  };
-
-  const handleSaveBill = () => {
-    const { id, createdAt, ...item } = scannedItem;
-    addBillItem(item);
-    toast({
-      title: 'Bill Saved',
-      description: 'The bill has been saved to your bills page.',
-    });
-  };
-
-  const handleSaveDocument = () => {
-    const { id, createdAt, ...item } = scannedItem;
-    addDocumentItem(item);
-    toast({
-      title: 'Document Saved',
-      description: 'The document has been saved to your documents page.',
-    });
-  };
-
   const handleExplainMemeClick = async () => {
     setIsMemeExplanationOpen(true);
     if (memeExplanation) return;
@@ -307,14 +280,11 @@ export function ResultsDisplay({
   const getActionIcon = (action: string) => {
     const actionLower = action.toLowerCase();
     if (actionLower.includes('calendar')) return <CalendarPlus className="mr-2" />;
-    if (actionLower.includes('ticket')) return <Bookmark className="mr-2" />;
     if (actionLower.includes('share')) return <Share2 className="mr-2" />;
     if (actionLower.includes('details')) return <Eye className="mr-2" />;
     if (actionLower.includes('scan qr code') || actionLower.includes('open link')) return <LinkIcon className="mr-2" />;
     if (actionLower.includes('direction')) return <MapPin className="mr-2" />;
     if (actionLower.includes('go to store') || actionLower.includes('find nearest store')) return <Store className="mr-2" />;
-    if (actionLower.includes('bill')) return <Receipt className="mr-2" />;
-    if (actionLower.includes('document')) return <FileText className="mr-2" />;
     if (actionLower.includes('contact')) return <Phone className="mr-2" />;
     if (actionLower.includes('explain meme')) return <HelpCircle className="mr-2" />;
     if (actionLower.includes('visit website')) return <Globe className="mr-2" />;
@@ -326,12 +296,6 @@ export function ResultsDisplay({
     const actionLower = action.toLowerCase();
     if (actionLower.includes('calendar')) {
       handleCalendarClick();
-    } else if (actionLower.includes('ticket')) {
-      handleSaveTicket();
-    } else if (actionLower.includes('bill')) {
-      handleSaveBill();
-    } else if (actionLower.includes('document')) {
-      handleSaveDocument();
     } else if (actionLower.includes('share')) {
         handleWhatsAppClick();
     } else if (actionLower.includes('details')) {
