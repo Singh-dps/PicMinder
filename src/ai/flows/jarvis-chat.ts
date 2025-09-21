@@ -117,8 +117,7 @@ const jarvisChatPrompt = ai.definePrompt({
     
     Here is the conversation history:
     {{#each messages}}
-      {{#if (eq role 'user')}}User: {{/if}}
-      {{#if (eq role 'model')}}Jarvis: {{/if}}
+      {{role}}:
       {{#each content}}
         {{#if text}}{{text}}{{/if}}
         {{#if media}}<media url="{{media.url}}" />{{/if}}
