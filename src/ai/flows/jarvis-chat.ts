@@ -1,4 +1,3 @@
-
 'use server';
 /**
  * @fileOverview A conversational chat agent for the Jarvis app.
@@ -100,12 +99,29 @@ const searchDocumentsTool = ai.defineTool(
     }
 );
 
+// Tool to explain a meme
+const explainMemeTool = ai.defineTool(
+    {
+        name: 'explainMeme',
+        description: 'Explains a meme. Use this when the user uploads a meme and asks for an explanation.',
+        inputSchema: z.object({
+            photoDataUri: z.string().describe("A photo of a meme, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."),
+        }),
+        outputSchema: z.object({
+            explanation: z.string(),
+        }),
+    },
+    async ({ photoDataUri }) => {
+        return explainMeme({ photoDataUri });
+    }
+);
+
 
 const jarvisChatPrompt = ai.definePrompt({
     name: 'jarvisChatPrompt',
     input: { schema: JarvisChatRequestSchema },
     output: { schema: z.any() },
-    tools: [analyzePhotoTool, getSavedItemsTool, searchDocumentsTool, explainMeme],
+    tools: [analyzePhotoTool, getSavedItemsTool, searchDocumentsTool, explainMemeTool],
     prompt: `You are Jarvis, a friendly and highly skilled AI assistant. Your goal is to assist users with their requests in a conversational and intuitive manner.
 
     - If the user provides a photo, call the 'analyzePhoto' tool to process it.
