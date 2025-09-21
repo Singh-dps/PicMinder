@@ -40,7 +40,9 @@ const categorizePhotosAndSuggestActionsPrompt = ai.definePrompt({
 
 Your primary goal is to analyze the photo and determine its most fitting category from the following list: "bills", "Tickets", "Ads", "Memes", "documents".
 
-- If the image contains a URL or a QR code, extract the URL for the websiteUrl or qrCodeUrl field respectively. Also suggest "Open link" as an action.
+- If the image contains an explicit URL or a QR code, extract the URL for the websiteUrl or qrCodeUrl field respectively and suggest "Open link" as an action.
+- If the image contains a logo, product, or text that implies an advertiser (e.g., "Coca-Cola", "Blitzit"), infer the most probable website URL (e.g., "coca-cola.com", "blitzit.com"), populate the websiteUrl field, and suggest "Open link" or "Visit Website" as an action.
+
 - If the image is a bill or invoice, categorize it as "bills".
 - If the image is a ticket or event invitation, categorize it as "Tickets".
 - If the image appears to be an advertisement, categorize it as "Ads".
@@ -72,3 +74,4 @@ const categorizePhotosAndSuggestActionsFlow = ai.defineFlow(
     return output!;
   }
 );
+
